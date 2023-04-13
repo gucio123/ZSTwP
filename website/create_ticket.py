@@ -1,23 +1,26 @@
 from datetime import datetime, date, timedelta
-from website.models import Ticket
+from website.models import Ticket, Fault
 from website import db
 
 PENDING = 1
-TIME_REQUIRED_TO_FIX = timedelta(days=7)
+HARDWARE = 1
 
 
-def create_ticket():
+def test1():
+    fault = Fault.query.filter_by(id=3).first()
+    create_ticket(fault)
+
+
+def create_ticket(fault):
+    status_id = PENDING
+    maintainer_id = choose_maintainer()
+    # TODO change to reporter_id
+    ticket_id = 1
+    is_physical_assistance_required = is_assistance_required(fault)
+    reported_date = datetime.now()
+    due_date = calculate_due_date(fault.severity_id)
+
     try:
-        status_id = PENDING
-        maintainer_id = choose_maintainer()
-        # what for is ticket_id?
-        ticket_id = 1
-        # TODO how to determine if assistance required
-        is_physical_assistance_required = True
-        reported_date = datetime.now()
-        # TODO how to calculate due date
-        due_date = date.today() + TIME_REQUIRED_TO_FIX
-
         new_ticket = Ticket(status_id=status_id, ticket_id=ticket_id,
                             maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
                             physical_assistance_req=is_physical_assistance_required)
@@ -29,6 +32,15 @@ def create_ticket():
 
     notify_maintainer(maintainer_id)
     return True
+
+
+def is_assistance_required(fault):
+    return fault.category_id == HARDWARE
+
+
+def calculate_due_date(severity_id):
+    how_much_days_required_to_fix = timedelta(days=severity_id)
+    return date.today() + how_much_days_required_to_fix
 
 
 # TODO create algorithm to choose maintainer (distance, number of ticket per maintainer etc.)

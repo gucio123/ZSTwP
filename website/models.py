@@ -58,7 +58,7 @@ class TicketStatus(db.Model):
 
 class Fault(db.Model):
     __tablename__ = 'fault'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     latitude = Column(Double)
     longitude = Column(Double)
     description = Column(String(500))
