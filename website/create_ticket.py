@@ -10,6 +10,7 @@ def create_ticket():
     try:
         status_id = PENDING
         maintainer_id = choose_maintainer()
+        # what for is ticket_id?
         ticket_id = 1
         # TODO how to determine if assistance required
         is_physical_assistance_required = True
@@ -24,7 +25,7 @@ def create_ticket():
         db.session.commit()
     except db.IntegrityError:
         print('Error: failed to insert new ticket')
-        return
+        return False
 
     notify_maintainer(maintainer_id)
     return True
