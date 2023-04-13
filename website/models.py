@@ -4,10 +4,10 @@ from sqlalchemy import Column, DateTime, Double, ForeignKey, Integer, String, Bo
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = Column(Integer, primary_key = True)
-    username = Column(String(500), unique = True)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(500), unique=True)
     password = Column(String(500))
-    email = Column(String(50), unique = True)
+    email = Column(String(50), unique=True)
     isAdmin = Column(Boolean)
     employee_id = Column(Integer, ForeignKey('employee.id'))
     maintainer_id = Column(Integer, ForeignKey('maintainer.id'))
@@ -15,7 +15,7 @@ class User(db.Model):
 
 class Employee(db.Model):
     __tablename__ = 'employee'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(50))
     surname = Column(String(50))
     phone = Column(Integer)
@@ -31,7 +31,7 @@ class Contractor(db.Model):
 
 class Maintainer(db.Model):
     __tablename__ = 'maintainer'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(50)) 
     surname = Column(String(50))   
     phone = Column(Integer)
@@ -41,7 +41,7 @@ class Maintainer(db.Model):
 
 class Ticket(db.Model):
     __tablename__ = 'ticket'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     reported_date = Column(DateTime)
     due_date = Column(DateTime)
     physical_assistance_req = Column(Boolean)
@@ -52,7 +52,7 @@ class Ticket(db.Model):
 
 class TicketStatus(db.Model):
     __tablename__ = 'ticket_status'
-    id = Column(Integer, primary_key = True, )
+    id = Column(Integer, primary_key=True)
     status = Column(String(50))
 
 
@@ -67,11 +67,11 @@ class Fault(db.Model):
     severity_id = Column(Integer, ForeignKey('fault_severity.id'))
 
 
-
 class FaultSeverity(db.Model):
     __tablename__ = 'fault_severity'
     id = Column(Integer, primary_key = True)
     severity = Column(String(500))
+
 
 class FaultCategory(db.Model):
     __tablename__ = 'fault_category'
