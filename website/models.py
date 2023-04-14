@@ -4,18 +4,18 @@ from sqlalchemy import Column, DateTime, Double, ForeignKey, Integer, String, Bo
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(500), unique=True)
-    password = Column(String(500))
-    email = Column(String(50), unique=True)
+    user_id = Column(Integer, primary_key = True)
+    username = Column(String(50), unique = True)
+    password = Column(String(50))
+    email = Column(String(50), unique = True)
     isAdmin = Column(Boolean)
-    employee_id = Column(Integer, ForeignKey('employee.id'))
+    employee_id = Column(Integer, ForeignKey('employee.id') )
     maintainer_id = Column(Integer, ForeignKey('maintainer.id'))
 
 
 class Employee(db.Model):
     __tablename__ = 'employee'
-    id = Column(Integer, primary_key=True)
+    employee_id = Column(Integer, primary_key = True)
     name = Column(String(50))
     surname = Column(String(50))
     phone = Column(Integer)
@@ -24,16 +24,16 @@ class Employee(db.Model):
 
 class Contractor(db.Model):
     __tablename__ = 'contractor'
-    id = Column(Integer, primary_key = True)
+    contractor_id = Column(Integer, primary_key = True)
     company_name = Column(String(50))
     nip = Column(Integer)
 
 
 class Maintainer(db.Model):
     __tablename__ = 'maintainer'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50)) 
-    surname = Column(String(50))   
+    maintainer_id = Column(Integer, primary_key = True)
+    name = Column(String(50))    
+    surname = Column(String(50))    
     phone = Column(Integer)
     employee_id = Column(Integer, ForeignKey('employee.id'))
     contractor_id = Column(Integer, ForeignKey('contractor.id'))
@@ -41,24 +41,25 @@ class Maintainer(db.Model):
 
 class Ticket(db.Model):
     __tablename__ = 'ticket'
-    id = Column(Integer, primary_key=True)
+    ticket_id = Column(Integer, primary_key = True)
     reported_date = Column(DateTime)
     due_date = Column(DateTime)
     physical_assistance_req = Column(Boolean)
     status_id = Column(Integer, ForeignKey('ticket_status.id'))
     maintainer_id = Column(Integer, ForeignKey('maintainer.id'))
-    ticket_id = Column(Integer, ForeignKey('user.id'))
+    fault_id = Column(Integer,ForeignKey('fault.id'))
+    reporter_id = Column(Integer, ForeignKey('user.id'))
 
 
 class TicketStatus(db.Model):
     __tablename__ = 'ticket_status'
-    id = Column(Integer, primary_key=True)
+    ticketStatus_id = Column(Integer, primary_key = True, )
     status = Column(String(50))
 
 
 class Fault(db.Model):
     __tablename__ = 'fault'
-    id = Column(Integer, primary_key=True)
+    fault_id = Column(Integer, primary_key = True)
     latitude = Column(Double)
     longitude = Column(Double)
     description = Column(String(500))
@@ -67,13 +68,14 @@ class Fault(db.Model):
     severity_id = Column(Integer, ForeignKey('fault_severity.id'))
 
 
+
 class FaultSeverity(db.Model):
     __tablename__ = 'fault_severity'
-    id = Column(Integer, primary_key = True)
+    faultSeverity_id = Column(Integer, primary_key = True)
     severity = Column(String(500))
 
 
 class FaultCategory(db.Model):
     __tablename__ = 'fault_category'
-    id = Column(Integer, primary_key = True)
+    faultCategory_id = Column(Integer, primary_key = True)
     category = Column(String(500))
