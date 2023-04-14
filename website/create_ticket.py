@@ -1,21 +1,18 @@
+from sqlalchemy import func
 from datetime import datetime, date, timedelta
 from website.models import Ticket, Fault
 from website import db
 
 PENDING = 1
 HARDWARE = 1
+COMPLETE = 3
 
 
-def test1():
-    fault = Fault.query.filter_by(id=3).first()
-    create_ticket(fault)
-
-
-def create_ticket(fault):
+def create_ticket(fault_id):
+    fault = Fault.query.filter_by(id=fault_id).first()
     status_id = PENDING
     maintainer_id = choose_maintainer()
-    # TODO change to reporter_id
-    ticket_id = 1
+    ticket_id = 1   # TODO fix magic numbers
     is_physical_assistance_required = is_assistance_required(fault)
     reported_date = datetime.now()
     due_date = calculate_due_date(fault.severity_id)
@@ -43,13 +40,15 @@ def calculate_due_date(severity_id):
     return date.today() + how_much_days_required_to_fix
 
 
-# TODO create algorithm to choose maintainer (distance, number of ticket per maintainer etc.)
 def choose_maintainer():
-    maintainer_id = 1
-    return maintainer_id
+    query = db.session.query(Ticket.maintainer_id, func.count(Ticket.id).label('tickets_per_maintainer')). \
+        filter(Ticket.status_id != COMPLETE).group_by(Ticket.maintainer_id).order_by('tickets_per_maintainer')
+
+    least_busy_maintainer_id = query[0][0]
+    return least_busy_maintainer_id
 
 
 # TODO send email
-# TODO make notification: to discuss
+# TODO make notification
 def notify_maintainer(maintainer_id):
     print(f'Maintainer {maintainer_id} has new ticket')
