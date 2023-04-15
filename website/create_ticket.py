@@ -8,17 +8,17 @@ HARDWARE = 1
 COMPLETE = 3
 
 
-def create_ticket(fault_id):
-    fault = Fault.query.filter_by(id=fault_id).first()
+def create_ticket(fault_id, reporter_id):
+
+    fault = Fault.query.filter_by(fault_id=fault_id).first()
     status_id = PENDING
     maintainer_id = choose_maintainer()
-    ticket_id = 1   # TODO fix magic numbers
     is_physical_assistance_required = is_assistance_required(fault)
     reported_date = datetime.now()
     due_date = calculate_due_date(fault.severity_id)
 
     try:
-        new_ticket = Ticket(status_id=status_id, ticket_id=ticket_id,
+        new_ticket = Ticket(status_id=status_id, fault_id=fault_id, reporter_id=reporter_id,
                             maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
                             physical_assistance_req=is_physical_assistance_required)
         db.session.add(new_ticket)
@@ -41,7 +41,7 @@ def calculate_due_date(severity_id):
 
 
 def choose_maintainer():
-    query = db.session.query(Ticket.maintainer_id, func.count(Ticket.id).label('tickets_per_maintainer')). \
+    query = db.session.query(Ticket.maintainer_id, func.count(Ticket.ticket_id).label('tickets_per_maintainer')). \
         filter(Ticket.status_id != COMPLETE).group_by(Ticket.maintainer_id).order_by('tickets_per_maintainer')
 
     least_busy_maintainer_id = query[0][0]
