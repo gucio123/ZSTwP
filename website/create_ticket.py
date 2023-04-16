@@ -8,7 +8,12 @@ HARDWARE = 1
 COMPLETE = 3
 
 
+<<<<<<< Updated upstream
 def create_ticket(fault_id):
+=======
+def create_ticket(fault_id, reporter_id):
+
+>>>>>>> Stashed changes
     fault = Fault.query.filter_by(id=fault_id).first()
     status_id = PENDING
     maintainer_id = choose_maintainer()
@@ -18,7 +23,11 @@ def create_ticket(fault_id):
     due_date = calculate_due_date(fault.severity_id)
 
     try:
+<<<<<<< Updated upstream
         new_ticket = Ticket(status_id=status_id, ticket_id=ticket_id,
+=======
+        new_ticket = Ticket(id=status_id, fault_id=fault_id, reporter_id=reporter_id,
+>>>>>>> Stashed changes
                             maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
                             physical_assistance_req=is_physical_assistance_required)
         db.session.add(new_ticket)
