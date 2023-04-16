@@ -11,9 +11,6 @@ COMPLETE = 3
 def create_ticket(fault_id, reporter_id):
 
     fault = Fault.query.filter_by(id=fault_id).first()
-def create_ticket(fault_id, reporter_id):
-
-    fault = Fault.query.filter_by(id=fault_id).first()
     status_id = PENDING
     maintainer_id = choose_maintainer()
     is_physical_assistance_required = is_assistance_required(fault)

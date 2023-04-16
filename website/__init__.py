@@ -1,9 +1,5 @@
 from flask import Flask
-# from models import User
-
 # import pymysql
-
-# from os import path
 from sqlalchemy import create_engine
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
