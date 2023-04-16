@@ -1,5 +1,8 @@
 from flask import Flask
+<<<<<<< HEAD
 # import pymysql
+=======
+>>>>>>> 8293c3460b1c8836fcf799f997528da334dcf72e
 # from models import User
 # from os import path
 from sqlalchemy import create_engine
@@ -10,7 +13,10 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 
 def create_app():
+<<<<<<< HEAD
     # pymysql.install_as_MySQLdb()
+=======
+>>>>>>> 8293c3460b1c8836fcf799f997528da334dcf72e
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'LDKQWH489312NDKL'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://gutowski:C7xTrPPcz8XefYnt@mysql.agh.edu.pl/gutowski'
