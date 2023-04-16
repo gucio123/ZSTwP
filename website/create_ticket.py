@@ -10,7 +10,7 @@ COMPLETE = 3
 
 def create_ticket(fault_id, reporter_id):
 
-    fault = Fault.query.filter_by(fault_id=fault_id).first()
+    fault = Fault.query.filter_by(id=fault_id).first()
     status_id = PENDING
     maintainer_id = choose_maintainer()
     is_physical_assistance_required = is_assistance_required(fault)
@@ -41,14 +41,14 @@ def calculate_due_date(severity_id):
 
 
 def choose_maintainer():
-    query = db.session.query(Ticket.maintainer_id, func.count(Ticket.ticket_id).label('tickets_per_maintainer')). \
+    query = db.session.query(Ticket.maintainer_id, func.count(Ticket.id).label('tickets_per_maintainer')). \
         filter(Ticket.status_id != COMPLETE).group_by(Ticket.maintainer_id).order_by('tickets_per_maintainer')
 
     least_busy_maintainer_id = query[0][0]
     return least_busy_maintainer_id
 
 
-# TODO send email
+# TODO send email 
 # TODO make notification
 def notify_maintainer(maintainer_id):
     print(f'Maintainer {maintainer_id} has new ticket')
