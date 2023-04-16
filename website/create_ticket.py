@@ -51,7 +51,7 @@ def choose_maintainer():
     return least_busy_maintainer_id
 
 
-# TODO send email
+# TODO send email 
 # TODO make notification
 def notify_maintainer(maintainer_id):
     print(f'Maintainer {maintainer_id} has new ticket')

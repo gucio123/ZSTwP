@@ -1,12 +1,13 @@
+from flask_login import UserMixin
 from . import db
 from sqlalchemy import Column, DateTime, Double, ForeignKey, Integer, String, Boolean
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True)
-    password = Column(String(50))
+    password = Column(String(500))
     email = Column(String(50), unique=True)
     isAdmin = Column(Boolean)
     employee_id = Column(Integer, ForeignKey('employee.id'))
