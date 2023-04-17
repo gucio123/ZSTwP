@@ -1,7 +1,9 @@
-{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
-    %}
-    <form method="POST">
-      <h3 align="center">Login</h3>
+{% extends "base.html" %} 
+{% block title %}Login{% endblock %} 
+{% block content %}
+  <div class="container d-flex justify-content-center align-items-center">
+    <form method="POST" class="col-md-6">
+      <h3 class="mb-3 text-center">Login</h3>
       <div class="form-group">
         <label for="email">Email Address</label>
         <input
@@ -23,6 +25,9 @@
         />
       </div>
       <br />
+      <div class="form-group text-center">
       <button type="submit" class="btn btn-primary">Login</button>
+      </div>
     </form>
-    {% endblock %}
+  </div>
+{% endblock %}
