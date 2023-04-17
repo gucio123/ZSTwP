@@ -1,10 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Kurwa dzialaj{% endblock %}</h1>
+{% endblock %}
+
+<section class="content">
+    {% block content %}
+        <form method="post">
+
+            <label for="device_serial_number">Device serial number:</label>
+            <input name="device_serial_number" id="device_serial_number" required>
+
+            <label for="severity_id">Severity:</label>
+            <input name="severity_id" id="severity_id" required>
+
+            <label for="latitude">Latitude:</label>
+            <input name="latitude" id="latitude" required>
+
+            <label for="longitude">Longitude:</label>
+            <input name="longitude" id="longitude" required>
+
+            <label for="description">Description:</label>
+            <input name="description" id="description" required>
+
+            <label for="category_id">Category ID:</label>
+            <input name="category_id" id="category_id" required>
+
+            <input type="submit" value="Submit">
+        </form>
+  {% endblock %}
+</section>
