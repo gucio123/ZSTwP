@@ -1,11 +1,10 @@
-from sqlalchemy import func
 from datetime import datetime, date, timedelta
-from website.models import Ticket, Fault
+from website.models import Ticket, Fault, Maintainer
 from website import db
 
-PENDING = 1
+PENDING = 2
 HARDWARE = 1
-COMPLETE = 3
+DONE = 4
 
 
 def create_ticket(fault_id, reporter_id):
@@ -41,8 +40,12 @@ def calculate_due_date(severity_id):
 
 
 def choose_maintainer():
-    query = db.session.query(Ticket.maintainer_id, func.count(Ticket.id).label('tickets_per_maintainer')). \
-        filter(Ticket.status_id != COMPLETE).group_by(Ticket.maintainer_id).order_by('tickets_per_maintainer')
+
+    subquery = db.session.query(Ticket.maintainer_id, db.func.count(Ticket.id).label('ticket_count'))\
+            .filter(Ticket.status_id != DONE).group_by(Ticket.maintainer_id).subquery()
+
+    query = db.session.query(Maintainer.id, subquery.c.ticket_count.label('ticket_count'))\
+        .outerjoin(subquery, Maintainer.id == subquery.c.maintainer_id).order_by(subquery.c.ticket_count.asc())
 
     least_busy_maintainer_id = query[0][0]
     return least_busy_maintainer_id
