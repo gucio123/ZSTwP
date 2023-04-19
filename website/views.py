@@ -1,60 +1,59 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, abort, redirect, url_for, jsonify
 from flask import Blueprint, render_template, request
 from . import db
 
-from website.models import Fault
+from website.models import Fault, FaultCategory, FaultSeverity
+
 views = Blueprint('views', __name__)
-fault_bp = Blueprint('report_fault', __name__)
-
-
-# @views.route('/')
-# def test():
-#     return render_template("home.html")
-#
-#
-# @fault_bp.route('/report_fault', methods=('GET', 'POST'))
-# def report_fault():
-#
-#     if request.method == 'POST':
-#         latitude = request.form['latitude']
-#         longitude = request.form['longitude']
-#         description = request.form['description']
-#         device_serial_number = request.form['device_serial_number']
-#         category_id = request.form['category_id']
-#         severity_id = request.form['severity_id']
-#
-#         fault = Fault(latitude=latitude, longitude=longitude, description=description,
-#                       device_serial_number=device_serial_number, category_id=category_id,
-#                       severity_id=severity_id)
-#         db.session.add(fault)
-#         db.session.commit()
-#         return Fault.query.all()
-#
-#     elif request.method == 'GET':
-#         return render_template('/report_fault.html')
-#
-#
-# # def choose_and_notify_maintainer():
-# #     notify_maintainer()
-# #     pass
-# #
-# #
-# # def notify_maintainer():
-# #     pass
-#
-#
-# def create_ticket():
-#     pass
+fault_bp = Blueprint('/report', __name__)
 
 
 
 
-# @views.route('/')
-# def test():
-#     # example how to use (creates ticket when on home page)
-#     create_ticket(1, 1)
+@fault_bp.route('/report', methods=('GET', 'POST'))
+def report_fault():
+
+    if request.method == 'POST':
+        latitude = request.form['latitude']
+        longitude = request.form['longitude']
+        description = request.form['description']
+        device_serial_number = request.form['device_serial_number']
+        category = request.form['category_id']
+        severity = request.form['severity_id']
+        category_id = FaultCategory.query.filter_by(category=category).first().id
+        severity_id = FaultSeverity.query.filter_by(severity=severity).first().id
+
+        try:
+            fault = Fault(latitude=latitude, longitude=longitude, description=description,
+                          device_serial_number=device_serial_number, category_id=category_id,
+                          severity_id=severity_id)
+            db.session.add(fault)
+            db.session.commit()
+            categories = [c.category for c in FaultCategory.query.all()]
+            severities = [s.severity for s in FaultSeverity.query.all()]
+            return render_template('/report_fault.html', categories=categories, severities=severities, successful=True)
+        except IndexError:
+            abort(404)
+
+    elif request.method == 'GET':
+        categories = [c.category for c in FaultCategory.query.all()]
+        severities = [s.severity for s in FaultSeverity.query.all()]
+        return render_template('/report_fault.html', categories=categories, severities=severities)
+
+
+@fault_bp.route('/list', methods=(['GET']))
+def list_faults():
+
+        faults = Fault.query.all()
+        faults = [f.serialize() for f in faults]
+        return jsonify(faults)
+
+
+@views.route('/')
 def home():
     return render_template("home.html")
+# def home():
+#     return render_template("home.html")
 
 @views.route('/admin')
 def admin():

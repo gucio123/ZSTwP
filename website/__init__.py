@@ -13,7 +13,11 @@ def create_app():
     # pymysql.install_as_MySQLdb()
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'LDKQWH489312NDKL'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://gutowski:C7xTrPPcz8XefYnt@mysql.agh.edu.pl/gutowski'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://gutowski:C7xTrPPcz8XefYnt@mysql.agh.edu.pl/gutowski'
+
+    # Production database, don't use until needed
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://mikolek:gCe1Zn893jk7Awun@mysql.agh.edu.pl/mikolek'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://gutowsk2:2xgPg28fNcAWyhSG@mysql.agh.edu.pl/gutowsk2'
     db.init_app(app)
 
     from .views import views
@@ -22,6 +26,7 @@ def create_app():
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
+    app.register_blueprint(fault_bp, url_prefix='/faults')
 
     with app.app_context():
         db.create_all()

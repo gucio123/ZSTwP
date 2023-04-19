@@ -12,7 +12,18 @@
             <input name="device_serial_number" id="device_serial_number" required>
 
             <label for="severity_id">Severity:</label>
-            <input name="severity_id" id="severity_id" required>
+                <select name="severity_id">
+                  {% for severity in severities %}
+                    <option value="{{ severity }}" SELECTED>{{ severity }}</option>
+                  {% endfor %}
+                </select>
+
+            <label for="category_id">Category:</label>
+                <select name="category_id">
+                  {% for category in categories %}
+                    <option value="{{ category }}" SELECTED>{{ category }}</option>
+                  {% endfor %}
+                </select>
 
             <label for="latitude">Latitude:</label>
             <input name="latitude" id="latitude" required>
@@ -28,5 +39,13 @@
 
             <input type="submit" value="Submit">
         </form>
+    {% if successful %}
+         <div class="alert alert-success" role="alert">
+            Your request was successful!
+        </div>
+        <a class="btn btn-primary" href="/">
+                Go to login page
+        </a>
+    {%  endif  %}
   {% endblock %}
 </section>

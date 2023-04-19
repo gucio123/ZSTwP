@@ -84,6 +84,8 @@
                 <a class="nav-item nav-link" id="logout" href="/auth/logout">Logout</a>
                 {% if current_user.is_authenticated %}
                 <a class="nav-item nav-link" id="admin" href="/admin">Admin</a>
+                <a class="nav-item nav-link" id="Report fault" href="/faults/report">Report fault</a>
+                <a class="nav-item nav-link" id="List fault" href="/faults/list">List faults</a>
                 {% endif %}
                 
                 {% if not current_user.is_authenticated %}
