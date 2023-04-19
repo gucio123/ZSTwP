@@ -10,6 +10,8 @@ views = Blueprint('views', __name__)
 # def test():
 #     # example how to use (creates ticket when on home page)
 #     create_ticket(3)
+
+
 @views.route('/')
 def home():
     return render_template("home.html")

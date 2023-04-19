@@ -12,8 +12,6 @@ class User(db.Model, UserMixin):
     isAdmin = Column(Boolean)
     employee_id = Column(Integer, ForeignKey('employee.id'))
     maintainer_id = Column(Integer, ForeignKey('maintainer.id'))
-    employee_id = Column(Integer, ForeignKey('employee.id'))
-    maintainer_id = Column(Integer, ForeignKey('maintainer.id'))
 
 
 class Employee(db.Model):
@@ -57,14 +55,12 @@ class Ticket(db.Model):
 class TicketStatus(db.Model):
     __tablename__ = 'ticket_status'
     id = Column(Integer, primary_key=True)
-    ticket_status_id = Column(Integer, primary_key=True)
     status = Column(String(50))
 
 
 class Fault(db.Model):
     __tablename__ = 'fault'
     id = Column(Integer, primary_key=True)
-    fault_id = Column(Integer, primary_key=True)
     latitude = Column(Double)
     longitude = Column(Double)
     description = Column(String(500))
@@ -76,12 +72,10 @@ class Fault(db.Model):
 class FaultSeverity(db.Model):
     __tablename__ = 'fault_severity'
     id = Column(Integer, primary_key=True)
-    fault_severity_id = Column(Integer, primary_key=True)
     severity = Column(String(500))
 
 
 class FaultCategory(db.Model):
     __tablename__ = 'fault_category'
     id = Column(Integer, primary_key=True)
-    fault_category_id = Column(Integer, primary_key=True)
     category = Column(String(500))
