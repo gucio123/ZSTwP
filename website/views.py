@@ -1,8 +1,11 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, jsonify
 from flask import Blueprint, render_template, request
 from . import db
-
 from website.models import Fault, FaultCategory, FaultSeverity
+from flask import Blueprint, render_template
+from flask_login import login_required
+
+
 
 views = Blueprint('views', __name__)
 fault_bp = Blueprint('/report', __name__)
@@ -35,6 +38,7 @@ def report_fault():
         except IndexError:
             abort(404)
 
+
     elif request.method == 'GET':
         categories = [c.category for c in FaultCategory.query.all()]
         severities = [s.severity for s in FaultSeverity.query.all()]
@@ -56,6 +60,7 @@ def home():
 #     return render_template("home.html")
 
 @views.route('/admin')
+@login_required
 def admin():
     return render_template("admin.html")
 
