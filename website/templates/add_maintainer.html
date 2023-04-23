@@ -1,10 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Add maintainer{% endblock %}
+{% block content %}
+  <div class="container d-flex justify-content-center align-items-center">
+    <form method="POST" class="col-md-6">
+      <h3 class="mb-3 text-center">Sign Up</h3>
+      <div class="form-group">
+        <label for="email">Maintainers' email Address</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          name="email"
+          placeholder="Enter email"
+        />
+      </div>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          name="username"
+          placeholder="Enter username"
+        />
+      </div>
+      <div class="form-group">
+        <label for="pswd1">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="pswd1"
+          name="pswd1"
+          placeholder="Enter password"
+        />
+      </div>
+      <div class="form-group">
+        <label for="pswd2">Password (Confirm)</label>
+        <input
+          type="password"
+          class="form-control"
+          id="pswd2"
+          name="pswd2"
+          placeholder="Confirm password"
+        />
+      </div>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          placeholder="Name"
+        />
+      </div>
+       <div class="form-group">
+        <label for="surname">Surname</label>
+        <input
+          type="text"
+          class="form-control"
+          id="surname"
+          name="surname"
+          placeholder="Surname"
+        />
+      </div>
+       <div class="form-group">
+        <label for="phone">Phone</label>
+        <input
+          type="password"
+          class="form-control"
+          id="phone"
+          name="phone"
+          placeholder="Phone"
+        />
+      </div>
+      <br />
+      <label for="contractor_id">Contractor:</label>
+        <select name="contractor">
+          {% for contractor in contractors %}
+            <option value="{{ contractor }}" SELECTED>{{ contractor }}</option>
+          {% endfor %}
+        </select>
+      <br />
+      <div class="form-group text-center">
+      <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

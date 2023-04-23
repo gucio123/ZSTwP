@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     password = Column(String(500))
     email = Column(String(50), unique=True)
     isAdmin = Column(Boolean)
+    isOperator = Column(Boolean)
     employee_id = Column(Integer, ForeignKey('employee.id'))
     maintainer_id = Column(Integer, ForeignKey('maintainer.id'))
 
@@ -36,7 +37,6 @@ class Maintainer(db.Model):
     name = Column(String(50))    
     surname = Column(String(50))    
     phone = Column(Integer)
-    employee_id = Column(Integer, ForeignKey('employee.id'))
     contractor_id = Column(Integer, ForeignKey('contractor.id'))
 
 
