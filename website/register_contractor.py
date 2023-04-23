@@ -22,6 +22,7 @@ def register_contractor():
             db.session.add(new_contractor)
             db.session.commit()
         except:
+            db.session.rollback()
             flash('Error: failed to register contractor', category='error')
             return render_template('register_contractor.html')
 
