@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, flash
 from flask_login import login_required
-from website.models import Contractor
+from website.models import Contractor,User
 from website import db
 
 bp = Blueprint('create-ticket', __name__)
@@ -39,11 +39,10 @@ def is_input_data_correct(company_name, nip):
     return True
 
 
+# NIP should have 10 numbers and have correct checksum
 def is_nip_format_correct(nip):
-    # NIP should have 10 numbers
     if len(nip) != 10:
         return False
-    # NIP should be only numbers
     elif not nip.isnumeric():
         return False
     elif not is_checksum_correct(nip):
