@@ -3,7 +3,7 @@ from flask_login import login_required
 from website.models import Contractor,User
 from website import db
 
-bp = Blueprint('create-ticket', __name__)
+bp = Blueprint('register-contractor', __name__)
 
 
 @bp.route('/register_contractor', methods=['GET', 'POST'])
