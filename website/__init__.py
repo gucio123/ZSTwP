@@ -1,10 +1,5 @@
 from flask import Flask
-# import pymysql
-# from models import User
-# from os import path
-from sqlalchemy import create_engine
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 from flask_login import LoginManager
 
 db = SQLAlchemy()
@@ -18,9 +13,11 @@ def create_app():
 
     from .views import views
     from .auth import auth
+    import website.register_contractor
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
+    app.register_blueprint(register_contractor.bp)
 
 
     with app.app_context():
