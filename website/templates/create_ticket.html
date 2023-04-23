@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Create ticket from fault{% endblock %}
+
+{% block content %}
+  <div class="container d-flex justify-content-center align-items-center">
+    <form method="POST" class="col-md-6">
+      <h3 class="mb-3 text-center">Create ticket from fault id</h3>
+      <div class="form-group">
+        <label for="fault_id">Fault id:</label>
+        <input
+          type="text"
+          class="form-control"
+          id="fault_id"
+          name="fault_id"
+          placeholder="Enter fault id"
+        />
+      </div>
+      <br />
+      <div class="form-group text-center">
+      <button type="submit" class="btn btn-primary">Create ticket</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
