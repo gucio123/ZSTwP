@@ -1,33 +1,49 @@
+from flask import Blueprint, request, render_template, flash
+from flask_login import login_required, current_user
 from datetime import datetime, date, timedelta
 from website.models import Ticket, Fault, Maintainer
 from website import db
 
-PENDING = 2
+NOT_READ = 1
 HARDWARE = 1
 DONE = 4
 
+bp = Blueprint('create-ticket', __name__)
 
-def create_ticket(fault_id, reporter_id):
 
-    fault = Fault.query.filter_by(id=fault_id).first()
-    status_id = PENDING
-    maintainer_id = choose_maintainer()
-    is_physical_assistance_required = is_assistance_required(fault)
-    reported_date = datetime.now()
-    due_date = calculate_due_date(fault.severity_id)
+@bp.route('/create_ticket', methods=['GET', 'POST'])
+@login_required
+def create_ticket():
+    if request.method == 'POST':
 
-    try:
-        new_ticket = Ticket(status_id=status_id, fault_id=fault_id, reporter_id=reporter_id,
-                            maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
-                            physical_assistance_req=is_physical_assistance_required)
-        db.session.add(new_ticket)
-        db.session.commit()
-    except db.IntegrityError:
-        print('Error: failed to insert new ticket')
-        return False
+        fault_id = request.form.get('fault_id')
+        fault = Fault.query.filter_by(id=fault_id).first()
 
-    notify_maintainer(maintainer_id)
-    return True
+        if fault is None:
+            info = f'Unable to create ticket! Check if fault {fault_id} exists'
+            flash(info, category='error')
+            return render_template("create_ticket.html")
+
+        reporter_id = current_user.id
+        status_id = NOT_READ
+        maintainer_id = choose_maintainer()
+        is_physical_assistance_required = is_assistance_required(fault)
+        reported_date = datetime.now()
+        due_date = calculate_due_date(fault.severity_id)
+
+        try:
+            new_ticket = Ticket(status_id=status_id, fault_id=fault_id, reporter_id=reporter_id,
+                                maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
+                                physical_assistance_req=is_physical_assistance_required)
+            db.session.add(new_ticket)
+            db.session.commit()
+        except db.IntegrityError:
+            flash('Error: failed to insert new ticket', category='error')
+            return render_template("create_ticket.html")
+
+        flash("Ticket created!", category="success")
+        notify_maintainer(maintainer_id)
+    return render_template("create_ticket.html")
 
 
 def is_assistance_required(fault):
