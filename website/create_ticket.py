@@ -8,7 +8,7 @@ NOT_READ = 1
 HARDWARE = 1
 DONE = 4
 
-bp = Blueprint('create-ticket', __name__)
+bp = Blueprint('create_ticket', __name__)
 
 
 @bp.route('/create_ticket', methods=['GET', 'POST'])
