@@ -84,10 +84,12 @@
                 {% if current_user.is_authenticated %}
                 <a class="nav-item nav-link" id="logout" href="/auth/logout">Logout</a>
                 <a class="nav-item nav-link" id="admin" href="/admin">Admin</a>
-                {% if current_user.isAdmin or current_user.isOperator %}
+                {% if current_user.isAdmin or current_user.isOperator  %}
                 <a class="nav-item nav-link" id="Report fault" href="/faults/report">Report fault</a>
                 <a class="nav-item nav-link" id="List fault" href="/faults/list">List faults</a>
                 <a class="nav-item nav-link" id="assign_maintainer_to_contractor" href="/maintainers/add_maintainer">Add maintainer</a>
+                {% elif current_user.maintainer_id != None %}
+                <a class="nav-item nav-link" id="list-fault-per-operator" href='/tickets/list/{{current_user.maintainer_id}}'>List your tickets</a>
                 {% endif %}
                 <a class="nav-item nav-link" id="create_ticket" href="/create_ticket">Create Ticket</a>
                 <a class="nav-item nav-link" id="register_contractor" href="/register_contractor">Register Contractor</a>

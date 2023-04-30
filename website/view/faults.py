@@ -3,9 +3,9 @@ from flask_login import login_required, current_user
 from .. import db
 from flask import Blueprint, request, flash, render_template, abort
 
-from website.models import FaultCategory, FaultSeverity, Fault
+from website.models import FaultCategory, FaultSeverity, Fault, Ticket, User
 
-fault_bp = Blueprint('/report', __name__)
+fault_bp = Blueprint('/fault', __name__)
 
 
 @fault_bp.route('/report', methods=('GET', 'POST'))
@@ -54,3 +54,4 @@ def list_faults():
     # faults = [f.serialize() for f in faults]
     # return jsonify(faults)
     return render_template("fault_list.html", faults=faults)
+
