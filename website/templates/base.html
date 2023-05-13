@@ -89,7 +89,7 @@
                   <a class="nav-item nav-link" id="register_contractor" href="/register_contractor">Register Contractor</a>
                   {% endif %}
                   {% if current_user.isOperator == 1 %}
-                  <a class="nav-item nav-link" id="show_faults_status" href="/show_faults_status">Show faults</a>
+                  <a class="nav-item nav-link" id="show_tickets_status" href="/show_tickets_status">Show tickets</a>
                   {% endif %}
                 {% if not current_user.is_authenticated %}
                 <a class="nav-item nav-link" id="login" href="/auth/login">Login</a>

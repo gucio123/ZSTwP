@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from . import db
 from sqlalchemy import Column, DateTime, Double, ForeignKey, Integer, String, Boolean
+from sqlalchemy.orm import relationship
 
 
 class User(db.Model, UserMixin):
@@ -51,6 +52,8 @@ class Ticket(db.Model):
     maintainer_id = Column(Integer, ForeignKey('maintainer.id'))
     fault_id = Column(Integer, ForeignKey('fault.id'))
     reporter_id = Column(Integer, ForeignKey('user.id'))
+
+    status = relationship("TicketStatus", backref="tickets")
 
 
 class TicketStatus(db.Model):

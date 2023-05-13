@@ -16,13 +16,13 @@ def create_app():
     from .auth import auth
     import website.create_ticket
     import website.register_contractor
-    import website.show_faults_status
+    import website.show_tickets_status
     
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(create_ticket.bp)
     app.register_blueprint(register_contractor.bp)
-    app.register_blueprint(show_faults_status.bp)
+    app.register_blueprint(show_tickets_status.bp)
 
     with app.app_context():
         db.create_all()

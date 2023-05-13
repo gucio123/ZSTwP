@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, flash
 from flask_login import login_required
-from website.models import Contractor,User
+from website.models import Contractor
 from website import db
 
 bp = Blueprint('register-contractor', __name__)
