@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-
 db = SQLAlchemy()
 
 
@@ -14,13 +13,13 @@ def create_app():
 
     from .views import views
     from .auth import auth
-    import website.create_ticket
-    import website.register_contractor
+    from .create_ticket import createTicket
+    from .register_contractor import registerContractor
     
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(create_ticket.bp)
-    app.register_blueprint(register_contractor.bp)
+    app.register_blueprint(createTicket, url_prefix='/')
+    app.register_blueprint(registerContractor, url_prefix='/')
 
     with app.app_context():
         db.create_all()

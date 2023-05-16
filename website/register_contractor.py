@@ -3,12 +3,12 @@ from flask_login import login_required
 from website.models import Contractor
 from website import db
 
-bp = Blueprint('create-ticket', __name__)
+registerContractor = Blueprint('register-contractor', __name__)
 
 
-@bp.route('/register_contractor', methods=['GET', 'POST'])
+@registerContractor.route('/register_contractor', methods=['GET', 'POST'])
 @login_required
-def register_contractor():
+def register_Contractor():
     if request.method == 'POST':
         company_name = request.form.get('company_name')
         nip = request.form.get('nip')
