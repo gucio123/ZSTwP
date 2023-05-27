@@ -8,10 +8,14 @@ NOT_READ = 1
 HARDWARE = 1
 DONE = 4
 
+<<<<<<< HEAD
+createTicket = Blueprint('create-ticket', __name__)
+=======
 bp = Blueprint('create_ticket', __name__)
+>>>>>>> 1c5c50bf76ec866c8433c79651352be85d5165f9
 
 
-@bp.route('/create_ticket', methods=['GET', 'POST'])
+@createTicket.route('/create_ticket', methods=['GET', 'POST'])
 @login_required
 def create_ticket():
     if request.method == 'POST':
