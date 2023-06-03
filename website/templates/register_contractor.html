@@ -29,6 +29,19 @@
       <div class="form-group text-center">
       <button type="submit" class="btn btn-primary">Register</button>
       </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const closeButtons = document.querySelectorAll('.flash-message .close');
+            closeButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const flashMessage = this.parentNode;
+                    flashMessage.style.display = 'none';
+                });
+            });
+        });
+    </script>
+    
     </form>
   </div>
 {% endblock %}

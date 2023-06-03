@@ -1,4 +1,15 @@
 {% extends "base.html" %} {% block title %}HOME{% endblock %} {% block content
 %}
 <h1>siemanko witam w mojej kuchni</h1>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const closeButtons = document.querySelectorAll('.flash-message .close');
+        closeButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                const flashMessage = this.parentNode;
+                flashMessage.style.display = 'none';
+            });
+        });
+    });
+</script>
 {% endblock %}
