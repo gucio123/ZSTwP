@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}All faults list:{% endblock %}
+
+{% block content %}
+  <div class="container justify-content-center align-items-center col-md-6">
+{% for fault in faults %}
+
+      <div class="row border rounded overflow-hidden position-relative ">
+          <div class="col p-4">
+                    <h3 class="mb-3 text-center">Fault {{fault.id}}</h3>
+        <br/>
+        <label for="fault_description">Description:</label>
+        <br/>
+        <div id="fault_description">
+            {{ fault.description}}
+        </div>
+        <br />
+      <label for="category">Category:</label>
+        <br/>
+        <div id="category">
+            {{ fault.category_id}}
+        </div>
+        <br />
+      <label for="severity">Seveirty:</label>
+          <br/>
+        <div id="severity">
+            {{ fault.severity_id}}
+        </div>
+        <br />
+      <label for="coords">Coordinates:</label>
+        <br/>
+        <div id="coords">
+            Lat: {{ fault.latitude}}
+            <br/>
+            Lon: {{ fault.longitude }}
+        </div>
+        <br />
+      </div>
+  </div>
+
+{% endfor %}
+        </div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Your tickets:{% endblock %}
+
+{% block content %}
+  <div class="container justify-content-center align-items-center col-md-6">
+      {% if ticket_with_fault_list is not defined %}
+      <h2>You have no assigned tickets. Enjoy the free time!</h2>
+      {% endif %}
+{% for item in ticket_with_fault_list %}
+
+      <div class="row border rounded overflow-hidden position-relative ">
+          <div class="col p-4">
+                    <h4 class="mb-3 text-center">Ticket {{item['ticket'].id}}</h4>
+        <br/>
+        <label for="reported_date">Reported date::</label>
+        <br/>
+        <div id="reported_date">
+            {{ item['ticket'].reported_date}}
+        </div>
+        <br />
+      <label for="due_date">Due date:</label>
+        <br/>
+        <div id="due_date">
+            {{ item['ticket'].due_date}}
+        </div>
+        <br />
+      <label for="physical_assistance_required">Is physical assistance requred?</label>
+          <br/>
+        <div id="physical_assistance_required">
+            {%if item['ticket'].physical_assistance_req != 0 %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </div>
+        <br />
+      <label for="reporter_username">Reporter:</label>
+        <br/>
+        <div id="reporter_username">
+            User: {{ item['reporter'].username}}
+        </div>
+        <br/>
+        <div id="reporter_email">
+            Email: {{ item['reporter'].email}}
+        </div>
+        <br />
+      </div>
+
+       <div class="row border rounded overflow-hidden position-relative ">
+          <div class="col p-4">
+                    <h5 class="mb-3 text-center">Fault {{item['fault'].id}}</h5>
+        <br/>
+
+        <br/>
+        <label for="fault_description">Description:</label>
+        <br/>
+        <div id="fault_description">
+            {{ item['fault'].description}}
+        </div>
+        <br />
+      <label for="category">Category:</label>
+        <br/>
+        <div id="category">
+            {{ item['fault'].category_id}}
+        </div>
+        <br />
+      <label for="severity">Seveirty:</label>
+          <br/>
+        <div id="severity">
+            {{ item['fault'].severity_id}}
+        </div>
+        <br />
+      <label for="coords">Coordinates:</label>
+        <br/>
+        <div id="coords">
+            Lat: {{ item['fault'].latitude}}
+            <br/>
+            Lon: {{ item['fault'].longitude }}
+        </div>
+        <br />
+      </div>
+  </div>
+          {% if item['is_user_on_loc'] is true %}
+          <h4 class="mb-3 text-center">You are on location of the ticket.</h4>
+          {% else %}
+          <h4 class="mb-3 text-center">You are not on location of the ticket. :(</h4>
+          {% endif %}
+  </div>
+      </div>
+
+{% endfor %}
+        </div>
+{% endblock %}

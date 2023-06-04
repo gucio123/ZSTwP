@@ -17,7 +17,7 @@ def login():
                 if check_password_hash(user.password, psswd):
                       flash("Succesfully logged!", category="success")
                       login_user(user, remember=True)
-                      return redirect(url_for('views.home'))
+                      return redirect(url_for('view.home'))
                 else:
                       flash("Bad password, try again", category="error")
 
@@ -55,6 +55,6 @@ def register():
                   db.session.commit()
                   login_user(new_user, remember=True)
                   flash('Account created!', category='success')
-                  return redirect(url_for('views.home'))
+                  return redirect(url_for('view.home'))
 
         return render_template("register.html", user = current_user)

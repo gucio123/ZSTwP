@@ -38,7 +38,6 @@ class Maintainer(db.Model):
     name = Column(String(50))    
     surname = Column(String(50))    
     phone = Column(Integer)
-    employee_id = Column(Integer, ForeignKey('employee.id'))
     contractor_id = Column(Integer, ForeignKey('contractor.id'))
 
 
@@ -72,6 +71,28 @@ class Fault(db.Model):
     category_id = Column(Integer, ForeignKey('fault_category.id'))
     severity_id = Column(Integer, ForeignKey('fault_severity.id'))
 
+    def serialize(self):
+        return {"id": self.id,
+                "latitude": self.latitude,
+                "longitude": self.longitude,
+                "description": self.description,
+                "device_serial_number": self.device_serial_number,
+                "category_id": self.category_id,
+                "severity_id": self.severity_id}
+
+    @property
+    def serialized(self):
+        return {
+            'id': self.id,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'description': self.description,
+            'device_serial_number': self.device_serial_number,
+            'category_id': self.category_id,
+            'severity_id': self.severity_id,
+
+        }
+
 
 class FaultSeverity(db.Model):
     __tablename__ = 'fault_severity'
@@ -79,6 +100,7 @@ class FaultSeverity(db.Model):
     severity = Column(String(500))
 
 
+# class FaultCategory(db.Model):
 class FaultCategory(db.Model):
     __tablename__ = 'fault_category'
     id = Column(Integer, primary_key=True)
