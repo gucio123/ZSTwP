@@ -11,7 +11,7 @@ fault_bp = Blueprint('/fault', __name__)
 @fault_bp.route('/report', methods=('GET', 'POST'))
 @login_required
 def report_fault():
-    if not current_user.isAdmin or current_user.isOperator:
+    if not (current_user.isAdmin or current_user.isOperator):
         abort(401)
     if request.method == 'POST':
         latitude = request.form['latitude']
