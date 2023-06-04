@@ -2,8 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
-
-
 db = SQLAlchemy()
 
 
@@ -29,6 +27,7 @@ def create_app():
 
     import website.create_ticket
     import website.register_contractor
+    import website.show_tickets_status
 
 
     app.register_blueprint(fault_bp, url_prefix='/faults')
@@ -38,6 +37,8 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(create_ticket.bp)
     app.register_blueprint(register_contractor.bp)
+    app.register_blueprint(show_tickets_status.bp)
+
 
     with app.app_context():
         db.create_all()
