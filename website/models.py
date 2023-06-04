@@ -60,6 +60,39 @@ class TicketStatus(db.Model):
     id = Column(Integer, primary_key=True)
     status = Column(String(50))
 
+class Notification(db.Model):
+    __tablename__ = 'notification'
+    id = Column(Integer, primary_key=True)
+    content = Column(String(500))
+    was_seen = Column(Boolean, default=False)
+    # for_admin and for_operator are created with the intention to use when a notification should be visible for all operators or admins.
+    # There will be one notification in the database, but multiple NotificationUser entries, so it will be easy to check if a user should
+    # have a notification visible.
+    # TODO: Add trigger in database for inserting NotificationUser entries when one of these fields is set to true so it doesn't have to
+    # TODO: be added from flask. For now these fields don't have any particular meaning.
+    for_admin = Column(Boolean, default=False)
+    for_operator = Column(Boolean, default=False)
+    ticket_id = Column(Integer, ForeignKey('ticket.id'))
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'was_seen': self.was_seen,
+            'for_admin': self.for_admin,
+            'for_operator': self.for_operator,
+            'ticket_id': self.ticket_id
+        }
+
+
+class NotificationUser(db.Model):
+    # This is the table used for mapping a many-to-many relationship between users and notifications
+    __tablename__ = 'notification_user'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    notification_id = Column(Integer, ForeignKey('notification.id'))
+
 
 class Fault(db.Model):
     __tablename__ = 'fault'
@@ -90,7 +123,6 @@ class Fault(db.Model):
             'device_serial_number': self.device_serial_number,
             'category_id': self.category_id,
             'severity_id': self.severity_id,
-
         }
 
 

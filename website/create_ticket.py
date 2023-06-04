@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, flash
 from flask_login import login_required, current_user
 from datetime import datetime, date, timedelta
-from website.models import Ticket, Fault, Maintainer
+from website.models import Ticket, Fault, Maintainer, Notification, NotificationUser
 from website import db
 
 NOT_READ = 1
@@ -34,16 +34,29 @@ def create_ticket():
         reported_date = datetime.now()
         due_date = calculate_due_date(fault.severity_id)
 
-        try:
-            new_ticket = Ticket(status_id=status_id, fault_id=fault_id, reporter_id=reporter_id,
-                                maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
-                                physical_assistance_req=is_physical_assistance_required)
-            db.session.add(new_ticket)
-            db.session.commit()
-        except:
-            db.session.rollback()
-            flash('Error: failed to insert new ticket', category='error')
-            return render_template("create_ticket.html")
+        # try:
+        new_ticket = Ticket(status_id=status_id, fault_id=fault_id, reporter_id=reporter_id,
+                            maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
+                            physical_assistance_req=is_physical_assistance_required)
+
+
+        db.session.add(new_ticket)
+
+        ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
+
+        new_notification = Notification(ticket_id=ticket.id)
+        db.session.add(new_notification)
+        notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
+        new_notification_user_relationship = NotificationUser(user_id=maintainer_id, notification_id=notification.id)
+        db.session.add(new_notification_user_relationship)
+
+        db.session.commit()
+        # except:
+        #
+        #     db.session.rollback()
+        #     flash('Error: failed to insert new ticket', category='error')
+        #     return render_template("create_ticket.html")
+        #     pass
 
         flash("Ticket created!", category="success")
         notify_maintainer(maintainer_id)
