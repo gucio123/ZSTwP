@@ -4,7 +4,7 @@ from website.models import Contractor
 from website import db
 
 
-bp = Blueprint('register-contractor', __name__)
+registerContractor = Blueprint('register-contractor', __name__)
 
 
 
