@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, flash
 from flask_login import login_required, current_user
 from datetime import datetime, date, timedelta
-from website.models import Ticket, Fault, Maintainer, Notification, NotificationUser
+from website.models import Ticket, Fault, Maintainer, Notification, NotificationUser, User
 from website import db
 
 NOT_READ = 1
@@ -14,7 +14,7 @@ createTicket = Blueprint('create-ticket', __name__)
 
 
 
-@createTicket.route('/create_ticket', methods=['GET', 'POST'])
+@createTicket.route('/create_ticket', methods=['GET', 'PATCH'])
 @login_required
 def create_ticket():
     if request.method == 'POST':
@@ -47,7 +47,9 @@ def create_ticket():
         new_notification = Notification(ticket_id=ticket.id)
         db.session.add(new_notification)
         notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
-        new_notification_user_relationship = NotificationUser(user_id=maintainer_id, notification_id=notification.id)
+        # maintainer = Maintainer.query.filter_by(id=maintainer_id).first()
+        user = User.query.filter_by(maintainer_id=maintainer_id).first()
+        new_notification_user_relationship = NotificationUser(user_id=user.id, notification_id=notification.id)
         db.session.add(new_notification_user_relationship)
 
         db.session.commit()

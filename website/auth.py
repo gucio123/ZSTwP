@@ -9,7 +9,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-          
+
           email = request.form.get('email')
           psswd = request.form.get('password')
           user = User.query.filter_by(email=email).first()
@@ -20,13 +20,7 @@ def login():
                       flash("Succesfully logged!", category="success")
                       login_user(user, remember=True)
 
-                      # Storing notifications in session object, available throughout the app
-                      user_notifications_relation = NotificationUser.query.filter_by(user_id=user.id).all()
-                      notifications = []
-                      for relation in user_notifications_relation:
-                          notifications.append(Notification.query.filter_by(id=relation.notification_id).first())
-                      notifications = [notification.serialize for notification in notifications]
-                      session["notifications"] = notifications
+                      update_user_notifications()
 
                       return redirect(url_for('view.home'))
                 else:
@@ -69,3 +63,12 @@ def register():
                   return redirect(url_for('view.home'))
 
         return render_template("register.html", user = current_user)
+
+def update_user_notifications():
+    # Storing notifications in session object, available throughout the app
+    user_notifications_relation = NotificationUser.query.filter_by(user_id=current_user.id).all()
+    notifications = []
+    for relation in user_notifications_relation:
+        notifications.append(Notification.query.filter_by(id=relation.notification_id).first())
+    notifications = [notification.serialize for notification in notifications]
+    session["notifications"] = notifications
