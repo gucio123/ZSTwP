@@ -62,8 +62,8 @@ def list_faults_per_operator(maintainer_id):
             )
         return render_template("ticket_list.html", ticket_with_fault_list=ticket_with_fault_list)
 
-@ticket_bp.route('/accept', methods=(['GET', 'POST']))
-def accept_ticket():
+@ticket_bp.route('/accept/<ticket_id>', methods=(['GET', 'POST']))
+def accept_ticket(ticket_id):
 
     # print(current_user.maintainer_id)
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
