@@ -32,7 +32,7 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(createTicket, url_prefix='/')
     app.register_blueprint(registerContractor, url_prefix='/')
-    app.register_blueprint(permissions, url_prefix='/')
+    app.register_blueprint(permissions, url_prefix='/permissions')
 
     with app.app_context():
         db.create_all()
