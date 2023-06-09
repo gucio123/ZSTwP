@@ -43,7 +43,7 @@ def list_faults_per_operator(maintainer_id):
         tickets_with_notifications = find_tickets_with_notifications_and_mark_as_seen(tickets, notifications)
 
         for ticket in tickets:
-            if ticket in tickets_with_notifications:
+            if tickets_with_notifications is not None and ticket in tickets_with_notifications:
                 does_ticket_have_notification = True
             else:
                 does_ticket_have_notification = False
@@ -64,31 +64,46 @@ def list_faults_per_operator(maintainer_id):
 
 @ticket_bp.route('/accept/<ticket_id>', methods=(['GET', 'POST']))
 def accept_ticket(ticket_id):
-
-    # print(current_user.maintainer_id)
-    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
-    return render_template("ticket_list.html")
-
-@ticket_bp.route('/decline', methods=(['GET', 'POST']))
-def decline_ticket():
-
-    return render_template("ticket_list.html")
-def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
-    ticket_ids = [notification.ticket_id for notification in notifications]
-    tickets_with_notifications = [ticket for ticket in tickets if ticket.id in ticket_ids]
-    for notification in notifications:
-        print(notification)
-        notification.was_seen = 1
-    for ticket in tickets:
-        print(ticket)
-        if ticket.status_id == 1:
-            ticket.status_id = 2
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 3
     db.session.commit()
-    update_user_notifications()
-    return tickets_with_notifications
+    notify_operator(ticket_id, current_user.maintainer_id)
+    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+
+
+@ticket_bp.route('/decline/<ticket_id>', methods=(['GET', 'POST']))
+def decline_ticket(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 5
+    db.session.commit()
+    notify_operator()
+    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
+    if notifications is not None:
+        ticket_ids = [notification.ticket_id for notification in notifications]
+        tickets_with_notifications = [ticket for ticket in tickets if ticket.id in ticket_ids]
+        for notification in notifications:
+            print(notification)
+            notification.was_seen = 1
+        for ticket in tickets:
+            print(ticket)
+            if ticket.status_id == 1:
+                ticket.status_id = 2
+        db.session.commit()
+        update_user_notifications()
+        return tickets_with_notifications
 
 def get_notifications_from_session():
     notifications_as_json = session.get('notifications')
-    notifications = [Notification.query.filter_by(id=notification['id']).first() for notification in
-                     notifications_as_json]
-    return notifications
+    if notifications_as_json:
+        notifications = [Notification.query.filter_by(id=notification['id']).first() for notification in
+                         notifications_as_json]
+        return notifications
+    else:
+        return
+
+def notify_operator(ticket_id, maintainer_id):
+    operator_notification = Notification(content="The maintainer: {} has accepted the ticket: {} ".format(ticket_id, maintainer_id), for_operator=True, ticket_id=ticket_id)
+    db.session.add(operator_notification)
+    db.session.commit()
+    # todo: add possibility to create notifications for all operators
