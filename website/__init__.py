@@ -37,7 +37,7 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(create_ticket.createTicket)
     app.register_blueprint(register_contractor.registerContractor)
-    app.register_blueprint(show_tickets_status.bp)
+    # app.register_blueprint(show_tickets_status.bp)
 
 
     with app.app_context():

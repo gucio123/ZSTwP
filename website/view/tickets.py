@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 from .. import db
 from flask import Blueprint, request, flash, render_template, abort, json, session, redirect, url_for
 
-from website.models import FaultCategory, FaultSeverity, Fault, Ticket, User, Notification, Maintainer
+from website.models import FaultCategory, FaultSeverity, Fault, Ticket, User, Notification, Maintainer, TicketStatus
 from ..auth import update_user_notifications
 
 ticket_bp = Blueprint('/ticket', __name__)
@@ -78,20 +78,35 @@ def decline_ticket(ticket_id):
     db.session.commit()
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=False)
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+
+@ticket_bp.route('/show_tickets_status', methods=['GET'])
+@login_required
+def show_tickets_status():
+    tickets = Ticket.query.filter_by(reporter_id=current_user.id).all()
+    ticket_status = TicketStatus.query.all()
+    notifications = get_notifications_from_session()
+    mark_notifications_as_seen(tickets, notifications)
+    return render_template('show_tickets_status.html', tickets=tickets, ticket_status=ticket_status)
+
 def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
     if notifications is not None:
         ticket_ids = [notification.ticket_id for notification in notifications]
         tickets_with_notifications = [ticket for ticket in tickets if ticket.id in ticket_ids]
         for notification in notifications:
-            print(notification)
             notification.was_seen = 1
         for ticket in tickets:
-            print(ticket)
             if ticket.status_id == 1:
                 ticket.status_id = 2
         db.session.commit()
         update_user_notifications()
         return tickets_with_notifications
+
+def mark_notifications_as_seen(notifications: List[Notification]):
+    if notifications is not None:
+        for notification in notifications:
+            notification.was_seen = 1
+        db.session.commit()
+        update_user_notifications()
 
 def get_notifications_from_session():
     notifications_as_json = session.get('notifications')

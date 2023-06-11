@@ -117,12 +117,14 @@
                 <span class="fa fa-comment"></span>
                   <span class="num">
                   <!--                this shows the number of current notifications for tickets (which have the ticket_id other than null -->
-                  {{ session['notifications'] |  selectattr("was_seen", "equalto", 0)| list | count }}
-                    {% for notification in notifications %}
-                        {% if (notification.get('was_seen') == 0 and notification.get('ticket_id')) %}
-                            {% set counter = counter + 1 %}
+<!--                  {{ session['notifications'] |  selectattr("was_seen", "equalto", 0)| list | count }}-->
+                    {% set counter = namespace(value=0) %}
+                    {% for notification in session['notifications'] %}
+                        {% if (notification.get('was_seen') == 0 and notification.get('ticket_id'))  %}
+                            {% set counter.value = counter.value + 1 %}
                         {% endif %}
                     {% endfor %}
+                    {{ counter.value }}
                 </span>
                 </a>
                 {% endif %}
@@ -136,7 +138,21 @@
                   <a class="nav-item nav-link" id="register_contractor" href="/register_contractor">Register Contractor</a>
                   {% endif %}
                   {% if current_user.isOperator == 1 %}
-                  <a class="nav-item nav-link" id="show_tickets_status" href="/show_tickets_status">Show tickets</a>
+                  <a class="nav-item nav-link fa fa-globe" id="show_tickets_status" href="/tickets/show_tickets_status">Show tickets
+                  <span class="fa fa-comment"></span>
+                  <span class="num">
+                  <!--                this shows the number of current notifications for tickets (which have the ticket_id other than null -->
+<!--                  {{ session['notifications'] |  selectattr("was_seen", "equalto", 0)| list | count }}-->
+                    {% set counter = namespace(value=0) %}
+                    {% for notification in session['notifications'] %}
+                        {% if (notification.get('was_seen') == 0 and notification.get('ticket_id'))  %}
+                            {% set counter.value = counter.value + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    {{ counter.value }}
+
+                  </span>
+                  </a>
                   {% endif %}
                 {% if not current_user.is_authenticated %}
                 <a class="nav-item nav-link" id="login" href="/auth/login">Login</a>
