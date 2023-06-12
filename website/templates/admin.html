@@ -24,6 +24,12 @@
               <button type="submit" class="btn btn-primary">Assign Admin</button>
             </form>
           {% endif %}
+          {% if user.isAdmin %}
+          <form action="{{ url_for('permissions.remove_admin') }}" method="POST" class="d-inline">
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <button type="submit" class="btn btn-danger">Remove Admin</button>
+          </form>
+        {% endif %}
         </td>
       </tr>
     {% endfor %}

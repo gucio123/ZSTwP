@@ -24,6 +24,27 @@ def admin_panel():
     db.session.commit()
     return render_template('admin.html', users = users)
 
+@permissions.route('/admin/remove', methods = ['GET', 'POST'])
+@login_required
+def remove_admin():
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        user = User.query.get(user_id)
+        if not user.isAdmin:
+            flash('This user is not an admin.', 'warning')
+        else:
+            user.isAdmin = False
+            db.session.commit()
+
+        return redirect(url_for('permissions.admin_panel'))
+
+    users = User.query.all()
+    db.session.commit()
+    return render_template('/admin', users = users)
+
+
+
+
 
 
 
