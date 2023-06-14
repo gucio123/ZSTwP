@@ -7,7 +7,6 @@ from website import db
 registerContractor = Blueprint('register-contractor', __name__)
 
 
-
 @registerContractor.route('/register_contractor', methods=['GET', 'POST'])
 @login_required
 def register_Contractor():

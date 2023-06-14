@@ -1,4 +1,3 @@
-
       <!DOCTYPE html>
       <html>
         <head>
@@ -21,7 +20,7 @@
               font-weight: bold;
               margin-bottom: 10px;
             }
-      
+ 
             .form-group input[type="text"],
             .form-group input[type="email"],
             .form-group input[type="password"] {
@@ -33,7 +32,7 @@
               margin-bottom: 20px;
               font-size: 16px;
             }
-      
+ 
             .btn-primary {
               background-color: #1abc9c;
               border-color: #1abc9c;
@@ -41,31 +40,31 @@
               font-weight: bold;
               padding: 10px 20px;
             }
-      
+ 
             .btn-primary:hover {
               background-color: #148f77;
               border-color: #148f77;
             }
-      
+ 
             .alert {
               font-size: 16px;
               font-weight: bold;
               margin-top: 20px;
             }
-      
+ 
             .alert-danger {
               color: #721c24;
               background-color: #f8d7da;
               border-color: #f5c6cb;
             }
-      
+ 
             .alert-success {
               color: #155724;
               background-color: #d4edda;
               border-color: #c3e6cb;
             }
           </style>
-      
+ 
           <title>{% block title %}Home{% endblock %}</title>
         </head>
         <body>
@@ -83,9 +82,10 @@
                 <a class="nav-item nav-link" id="home" href="/">Home</a>
                 {% if current_user.is_authenticated %}
                 <a class="nav-item nav-link" id="logout" href="/auth/logout">Logout</a>
-
+ 
 <!--                <a class="nav-item nav-link" id="admin" href="/admin">Admin</a>-->
                 {% if current_user.isAdmin or current_user.isOperator  %}
+                <a class="nav-item nav-link" id="admin" href="/permissions/admin">Admin</a>
                 <a class="nav-item nav-link" id="Report fault" href="/faults/report">Report fault</a>
                 <a class="nav-item nav-link" id="List fault" href="/faults/list">List faults</a>
                 <a class="nav-item nav-link" id="assign_maintainer_to_contractor" href="/maintainers/add_maintainer">Add maintainer</a>
@@ -95,9 +95,10 @@
 <!--                <a class="nav-item nav-link" id="create_ticket" href="/create_ticket">Create Ticket</a>-->
 <!--                <a class="nav-item nav-link" id="register_contractor" href="/register_contractor">Register Contractor</a>-->
 
+                <!-- TODO MAINTAINER NOTIFICATION -->
+                <a class="nav-item nav-link" id="notification_fault" href="/faults">Fault Notification</a>
                 {% endif %}
                   {% if current_user.isAdmin %}
-                  <a class="nav-item nav-link" id="admin" href="/admin">Admin</a>
                   <a class="nav-item nav-link" id="create_ticket" href="/create_ticket">Create Ticket</a>
                   <a class="nav-item nav-link" id="register_contractor" href="/register_contractor">Register Contractor</a>
                   {% endif %}
@@ -111,25 +112,36 @@
               </div>
             </div>
           </nav>
-      
-          {% with messages = get_flashed_messages(with_categories=true) %} {% if
-          messages %} {% for category, message in messages %} {% if category ==
-          'error' %}
-          <div class="alert alert-danger alter-dismissable fade show" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert">
-              <span aria-hidden="true">&times;</span>
-            </button>
+                      {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-message {% if category == 'error' %}error{% elif category == 'success' %}success{% endif %}">
+                    {{ message }}
+                    <button class="close">&times;</button>
+                </div>
+            {% endfor %}
           </div>
-          {% else %}
-          <div class="alert alert-success alter-dismissable fade show" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          {% endif %} {% endfor %} {% endif %} {% endwith %}
-      
+            {% endif %}
+          {% endwith %}
+{#          {% with messages = get_flashed_messages(with_categories=true) %} {% if#}
+{#          messages %} #}
+{#              {% for category, message in messages %} {% if category == 'error' %}#}
+{#          <div class="alert alert-danger alter-dismissable fade show" role="alert">#}
+{#            {{ message }}#}
+{#            <button type="button" class="close" data-dismiss="alert">#}
+{#              <span aria-hidden="true">&times;</span>#}
+{#            </button>#}
+{#          </div>#}
+{#          {% else %}#}
+{#          <div class="alert alert-success alter-dismissable fade show" role="alert">#}
+{#            {{ message }}#}
+{#            <button type="button" class="close" data-dismiss="alert">#}
+{#              <span aria-hidden="true">&times;</span>#}
+{#            </button>#}
+{#          </div>#}
+{#          {% endif %} {% endfor %} {% endif %} {% endwith %}#}
+ 
           <div class="container">{% block content %} {% endblock %}</div>
           <script
             src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -139,4 +151,4 @@
           </script
             src="https://cdnjs.cloudflare.com/ajax/libs">
         </body>
-
+ 
