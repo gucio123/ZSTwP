@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Ticket list:{% endblock %}
+
+{% block content %}
+  <div class="container justify-content-center align-items-center col-md-6">
+{% for ticket in tickets %}
+    <div class="col p-4">
+        <h3 class="mb-3 text-center">Ticket {{ticket.id}}</h3>
+        <label for="ticket_status">Ticket status: {{ ticket.status.status }}</label>
+        <br />
+    </div>
+{% endfor %}
+  </div>
+{% endblock %}

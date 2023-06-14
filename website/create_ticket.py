@@ -37,7 +37,8 @@ def create_ticket():
                                 physical_assistance_req=is_physical_assistance_required)
             db.session.add(new_ticket)
             db.session.commit()
-        except db.IntegrityError:
+        except:
+            db.session.rollback()
             flash('Error: failed to insert new ticket', category='error')
             return render_template("create_ticket.html")
 

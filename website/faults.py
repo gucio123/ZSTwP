@@ -5,13 +5,13 @@ from flask import Blueprint, request, flash, render_template, abort
 
 from website.models import FaultCategory, FaultSeverity, Fault, Maintainer, Notification
 
-fault_bp = Blueprint('/report', __name__)
+fault_bp = Blueprint('/fault', __name__)
 
 
 @fault_bp.route('/report', methods=('GET', 'POST'))
 @login_required
 def report_fault():
-    if not current_user.isAdmin or current_user.isOperator:
+    if not (current_user.isAdmin or current_user.isOperator):
         abort(401)
     if request.method == 'POST':
         latitude = request.form['latitude']
