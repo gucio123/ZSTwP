@@ -85,7 +85,7 @@ def show_tickets_status():
     tickets = Ticket.query.filter_by(reporter_id=current_user.id).all()
     ticket_status = TicketStatus.query.all()
     notifications = get_notifications_from_session()
-    mark_notifications_as_seen(tickets, notifications)
+    mark_notifications_as_seen( notifications)
     return render_template('show_tickets_status.html', tickets=tickets, ticket_status=ticket_status)
 
 def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
