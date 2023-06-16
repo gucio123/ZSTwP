@@ -85,6 +85,20 @@
           {% else %}
           <h4 class="mb-3 text-center">You are not on location of the ticket. :(</h4>
           {% endif %}
+          {% if item['ticket_status'] == 2 %}
+          <form method="POST" id="myForm">
+
+          <button type="submit" class="btn btn-lg btn-primary" formaction="{{  url_for('/ticket.accept_ticket', ticket_id=item['ticket'].id)  }}" id="accpet_ticket_btn_{{ item['ticket'].id }}" >Accept ticket</input>
+          <button type="submit" class="btn btn-secondary btn-lg" formaction="{{ url_for('/ticket.decline_ticket', ticket_id=item['ticket'].id)  }}" id="decline_ticket_btn_{{ item['ticket'].id }}">Decline ticket</input>
+          </form>
+
+          {% elif item['ticket_status'] == 3 %}
+          <h4>Ticket accepted</h4>
+          {% elif item['ticket_status'] == 5 %}
+          <h4>Ticket declined</h4>
+          {% endif %}
+
+
   </div>
       </div>
 

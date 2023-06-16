@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from .models import User
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
+from .models import User, NotificationUser, Notification
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -9,14 +9,19 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-          
+
           email = request.form.get('email')
           psswd = request.form.get('password')
           user = User.query.filter_by(email=email).first()
+
+
           if user:
                 if check_password_hash(user.password, psswd):
                       flash("Succesfully logged!", category="success")
                       login_user(user, remember=True)
+
+                      update_user_notifications()
+
                       return redirect(url_for('view.home'))
                 else:
                       flash("Bad password, try again", category="error")
@@ -58,3 +63,12 @@ def register():
                   return redirect(url_for('view.home'))
 
         return render_template("register.html", user = current_user)
+
+def update_user_notifications():
+    # Storing notifications in session object, available throughout the app
+    user_notifications_relation = NotificationUser.query.filter_by(user_id=current_user.id).all()
+    notifications = []
+    for relation in user_notifications_relation:
+        notifications.append(Notification.query.filter_by(id=relation.notification_id).first())
+    notifications = [notification.serialize for notification in notifications]
+    session["notifications"] = notifications
