@@ -28,9 +28,10 @@ def create_ticket():
         reporter_id = current_user.id
         status_id = NOT_READ
         # maintainer_id = choose_maintainer()
-        # TODO: Fix database entries, maybe add some triggers to database. For now deleted maintainers who didn't have appropriate user accounts,
-        # TODO: there is a mismatch in ids for maintainer@maintainer.com. To fix.
         maintainer_id = 3
+        # TODO: Fix database entries, maybe add some triggers to database. For now deleted maintainers who didn't have
+        #  appropriate user accounts,
+        # TODO: there is a mismatch in ids for maintainer@maintainer.com. To fix.
         is_physical_assistance_required = is_assistance_required(fault)
         reported_date = datetime.now()
         due_date = calculate_due_date(fault.severity_id)
@@ -39,30 +40,16 @@ def create_ticket():
             new_ticket = Ticket(status_id=status_id, fault_id=fault_id, reporter_id=reporter_id,
                                 maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
                                 physical_assistance_req=is_physical_assistance_required)
-
-
             db.session.add(new_ticket)
-
-            ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
-
-            new_notification = Notification(ticket_id=ticket.id)
-            db.session.add(new_notification)
-            notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
-            # maintainer = Maintainer.query.filter_by(id=maintainer_id).first()
-            user = User.query.filter_by(maintainer_id=maintainer_id).first()
-            new_notification_user_relationship = NotificationUser(user_id=user.id, notification_id=notification.id)
-            db.session.add(new_notification_user_relationship)
-
             db.session.commit()
         except:
-
             db.session.rollback()
             flash('Error: failed to insert new ticket', category='error')
             return render_template("create_ticket.html")
             pass
 
         flash("Ticket created!", category="success")
-        notify_maintainer(maintainer_id)
+        notify_maintainer(maintainer_id, fault_id)
     return render_template("create_ticket.html")
 
 
@@ -87,7 +74,14 @@ def choose_maintainer():
     return least_busy_maintainer_id
 
 
-# TODO send email 
-# TODO make notification
-def notify_maintainer(maintainer_id):
-    print(f'Maintainer {maintainer_id} has new ticket')
+def notify_maintainer(maintainer_id, fault_id):
+    try:
+        ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
+        new_notification = Notification(ticket_id=ticket.id)
+        db.session.add(new_notification)
+        notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
+        user = User.query.filter_by(maintainer_id=maintainer_id).first()
+        new_notification_user_relationship = NotificationUser(user_id=user.id, notification_id=notification.id)
+        db.session.add(new_notification_user_relationship)
+    except:
+        db.session.rollback()
