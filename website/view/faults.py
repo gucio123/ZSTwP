@@ -22,19 +22,20 @@ def report_fault():
         severity = request.form['severity_id']
         category_id = FaultCategory.query.filter_by(category=category).first().id
         severity_id = FaultSeverity.query.filter_by(severity=severity).first().id
-        maintainer_id = current_user.maintainer_id
+        # maintainer_id = current_user.maintainer_id
 
         try:
             fault = Fault(latitude=latitude, longitude=longitude, description=description,
                           device_serial_number=device_serial_number, category_id=category_id,
                           severity_id=severity_id)
             # TODO MAINTAINER NOTIFICATION
-            maintainer = Maintainer.query.get(maintainer_id)
-            notification_content = f"A new fault has been commissioned for you. Fault ID: {fault.id}"
-            notification = Notification(content=notification_content,
-                                        user_id=maintainer.user_id,
-                                        status="unread")
-            db.session.add(notification)
+            # TODO Notifications are generated when a ticket is created, also there ticket is mapped to maintainer
+            # maintainer = Maintainer.query.get(maintainer_id)
+            # notification_content = f"A new fault has been commissioned for you. Fault ID: {fault.id}"
+            # notification = Notification(content=notification_content,
+            #                             user_id=maintainer.user_id,
+            #                             status="unread")
+            # db.session.add(notification)
             db.session.add(fault)
             db.session.commit()
             categories = [c.category for c in FaultCategory.query.all()]
