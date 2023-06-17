@@ -1,6 +1,6 @@
 from flask_login import login_required, current_user
 
-from . import db
+from website import db
 from flask import Blueprint, request, flash, render_template, abort
 
 from website.models import FaultCategory, FaultSeverity, Fault, Maintainer, Notification

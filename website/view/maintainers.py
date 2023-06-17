@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash
 
-from . import db
+from website import db
 from flask import Blueprint, request, flash, render_template, redirect, url_for
 
 from website.models import Contractor, User, Maintainer

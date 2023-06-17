@@ -1,7 +1,7 @@
+import pymysql
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-
 
 
 db = SQLAlchemy()
@@ -18,13 +18,14 @@ def create_app():
     # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://gutowsk2:2xgPg28fNcAWyhSG@mysql.agh.edu.pl/gutowsk2'
     db.init_app(app)
 
-    from .views import views
-    from .auth import auth
-    from .faults import fault_bp
-    from .maintainers import maintainer_bp
-    from .create_ticket import createTicket
-    from .register_contractor import registerContractor
-    from .permissions import permissions
+    from website.views import views
+    from website.auth import auth
+    from website.view.faults import fault_bp
+    from website.view.maintainers import maintainer_bp
+    # from website.create_ticket import createTicket
+    from website.register_contractor import registerContractor
+    from website.permissions import permissions
+    from website.view.tickets import ticket_bp
 
     app.register_blueprint(fault_bp, url_prefix='/faults')
     app.register_blueprint(maintainer_bp, url_prefix='/maintainers')
@@ -33,9 +34,9 @@ def create_app():
 
     app.register_blueprint(permissions, url_prefix='/permissions')
 
-    app.register_blueprint(create_ticket.createTicket)
+    app.register_blueprint(ticket_bp, url_prefix='/tickets')
     app.register_blueprint(register_contractor.registerContractor)
-    # app.register_blueprint(show_tickets_status.bp)
+
 
 
     with app.app_context():

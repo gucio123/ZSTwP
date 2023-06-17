@@ -138,9 +138,4 @@ class FaultCategory(db.Model):
     id = Column(Integer, primary_key=True)
     category = Column(String(500))
 
-class Notification(db.Model):
-    __tablename__ = 'notification'
-    id = Column(Integer, primary_key=True)
-    content = Column(String(500))
-    user_id = Column(Integer, ForeignKey('user.id'))
-    status = Column(String(50))
+
