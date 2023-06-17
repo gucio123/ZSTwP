@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
 
-
 db = SQLAlchemy()
 
 
@@ -20,8 +19,8 @@ def create_app():
 
     from .views import views
     from .auth import auth
-    from .faults import fault_bp
-    from .maintainers import maintainer_bp
+    from website.view.faults import fault_bp
+    from website.view.maintainers import maintainer_bp
     from .create_ticket import createTicket
     from .register_contractor import registerContractor
     from .permissions import permissions

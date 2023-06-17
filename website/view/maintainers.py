@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash
 
-from . import db
+from .. import db
 from flask import Blueprint, request, flash, render_template, redirect, url_for
 
 from website.models import Contractor, User, Maintainer
@@ -54,5 +54,3 @@ def assign_maintainer_to_contractor():
 
     elif request.method == 'GET':
         return render_template('/add_maintainer.html', contractors=contractors)
-
-
