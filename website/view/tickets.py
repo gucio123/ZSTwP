@@ -8,7 +8,8 @@ from flask_login import login_required, current_user
 from website import db
 from flask import Blueprint, request, flash, render_template, abort, json, session, redirect, url_for
 
-from website.models import FaultCategory, FaultSeverity, Fault, Ticket, User, Notification, Maintainer, TicketStatus
+from website.models import FaultCategory, FaultSeverity, Fault, Ticket, User, Notification, Maintainer, TicketStatus, \
+    NotificationUser
 from website.auth import update_user_notifications
 
 ticket_bp = Blueprint('/ticket', __name__)
@@ -95,7 +96,8 @@ def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: Lis
         ticket_ids = [notification.ticket_id for notification in notifications]
         tickets_with_notifications = [ticket for ticket in tickets if ticket.id in ticket_ids]
         for notification in notifications:
-            notification.was_seen = 1
+            # notification.was_seen = 1
+            db.session.delete(notification)
         for ticket in tickets:
             if ticket.status_id == 1:
                 ticket.status_id = 2
@@ -106,7 +108,8 @@ def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: Lis
 def mark_notifications_as_seen(notifications: List[Notification]):
     if notifications is not None:
         for notification in notifications:
-            notification.was_seen = 1
+            # notification.was_seen = 1
+            db.session.delete(notification)
         db.session.commit()
         update_user_notifications()
 
@@ -151,10 +154,8 @@ def create_ticket():
 
         reporter_id = current_user.id
         status_id = NOT_READ
-        # maintainer_id = choose_maintainer()
-        # TODO: Fix database entries, maybe add some triggers to database. For now deleted maintainers who didn't have appropriate user accounts,
-        # TODO: there is a mismatch in ids for maintainer@maintainer.com. To fix.
-        maintainer_id = 3
+        maintainer_id = choose_maintainer()
+
         is_physical_assistance_required = is_assistance_required(fault)
         reported_date = datetime.now()
         due_date = calculate_due_date(fault.severity_id)
@@ -168,8 +169,8 @@ def create_ticket():
             db.session.add(new_ticket)
 
             ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
-
-            new_notification = Notification(ticket_id=ticket.id)
+            notification_content = "There was a ticket assigned to you for fault: {}".format(fault.description)
+            new_notification = Notification(ticket_id=ticket.id, content=notification_content)
             db.session.add(new_notification)
             notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
             # maintainer = Maintainer.query.filter_by(id=maintainer_id).first()
@@ -183,7 +184,6 @@ def create_ticket():
             db.session.rollback()
             flash('Error: failed to insert new ticket', category='error')
             return render_template("create_ticket.html")
-            pass
 
         flash("Ticket created!", category="success")
         notify_maintainer(maintainer_id)

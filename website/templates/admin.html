@@ -9,6 +9,7 @@
       <th>Username</th>
       <th>Email</th>
       <th>Admin</th>
+      <th>Operator</th>
     </tr>
   </thead>
   <tbody>
@@ -17,17 +18,28 @@
         <td>{{ user.username }}</td>
         <td>{{ user.email }}</td>
         <td>{{ "Yes" if user.isAdmin else "No" }}</td>
+        <td>{{ "Yes" if user.isOperator else "No" }}</td>
         <td>
           {% if current_user.isAdmin %}
             <form action="{{ url_for('permissions.admin_panel') }}" method="POST" class="d-inline">
               <input type="hidden" name="user_id" value="{{ user.id }}">
               <button type="submit" class="btn btn-primary">Assign Admin</button>
             </form>
+            <form action="{{ url_for('permissions.operator_panel') }}" method="POST" class="d-inline">
+              <input type="hidden" name="user_id" value="{{ user.id }}">
+              <button type="submit" class="btn btn-primary">Assign Operator</button>
+            </form>
           {% endif %}
           {% if user.isAdmin %}
           <form action="{{ url_for('permissions.remove_admin') }}" method="POST" class="d-inline">
             <input type="hidden" name="user_id" value="{{ user.id }}">
             <button type="submit" class="btn btn-danger">Remove Admin</button>
+          </form>
+          {% endif %}
+          {% if user.isOperator %}
+          <form action="{{ url_for('permissions.remove_operator') }}" method="POST" class="d-inline">
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <button type="submit" class="btn btn-danger">Remove Operator</button>
           </form>
         {% endif %}
         </td>
