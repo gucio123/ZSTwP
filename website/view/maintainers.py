@@ -20,13 +20,13 @@ def assign_maintainer_to_contractor():
         name = request.form.get('name')
         surname = request.form.get('surname')
         phone = request.form.get('phone')
-        badge_number = request.form.get('badge_number')
+        # badge_number = request.form.get('badge_number')
         contractor = request.form['contractor']
         contractor_id = Contractor.query.filter_by(company_name=contractor).first().id
 
         check_mail = User.query.filter_by(email=email).first()
         check_user = User.query.filter_by(username=username).first()
-        check_badge = Employee.query.filter_by(badge_number=badge_number).first()
+        # check_badge = Employee.query.filter_by(badge_number=badge_number).first()
         if check_mail:
             flash('Email address already exists, try again', category='error')
             return redirect(url_for('/add_maintainer.assign_maintainer_to_contractor'))
@@ -36,17 +36,17 @@ def assign_maintainer_to_contractor():
         if pswd1 != pswd2:
             flash('Passwords do not match, check password!', category='error')
             return redirect(url_for("/add_maintainer.assign_maintainer_to_contractor"))
-        if check_badge:
-            flash('This badge number is already in use, try again.', category='error')
-            return redirect(url_for("/add_maintainer.assign_maintainer_to_contractor"))
+        # if check_badge:
+        #     flash('This badge number is already in use, try again.', category='error')
+        #     return redirect(url_for("/add_maintainer.assign_maintainer_to_contractor"))
 
         else:
             try:
 
-                result_employee = db.session.execute(text(
-                    'INSERT INTO employee (name, surname, phone, badge_number) VALUES (:name, :surname, :phone, :badge_number)'),
-                                            {'name': name, 'surname': surname, 'phone': phone,
-                                             'badge_number': badge_number})
+                # result_employee = db.session.execute(text(
+                #     'INSERT INTO employee (name, surname, phone, badge_number) VALUES (:name, :surname, :phone, :badge_number)'),
+                #                             {'name': name, 'surname': surname, 'phone': phone,
+                #                              'badge_number': badge_number})
 
                 result_maintainer = db.session.execute(text(
                     'INSERT INTO maintainer (name, surname, phone, contractor_id) VALUES (:name, :surname, :phone, :contractor_id)'),
@@ -54,7 +54,7 @@ def assign_maintainer_to_contractor():
                                              'contractor_id': contractor_id})
 
                 new_user = User(email=email, username=username,
-                                password=generate_password_hash(pswd1, method='sha256'), employee_id=result_employee.lastrowid,
+                                password=generate_password_hash(pswd1, method='sha256'),
                                 maintainer_id=result_maintainer.lastrowid, isAdmin=False, isOperator=False)
 
                 db.session.add(new_user)

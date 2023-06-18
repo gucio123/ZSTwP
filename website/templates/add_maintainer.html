@@ -67,27 +67,29 @@
        <div class="form-group">
         <label for="phone">Phone</label>
         <input
-          type="password"
+          type="number"
           class="form-control"
           id="phone"
           name="phone"
+          min="100000000"
+          max="999999999"
           placeholder="Phone"
         />
-       <div class="form-group">
-        <label for="badge_number">Badge number</label>
-        <input
-          type="number"
-          class="form-control"
-          id="badge_number"
-          name="badge_number"
-          min="10000000000"
-          max="99999999999"
-          placeholder="Badge number"
-        />
+<!--       <div class="form-group">-->
+<!--        <label for="badge_number">Badge number</label>-->
+<!--        <input-->
+<!--          type="number"-->
+<!--          class="form-control"-->
+<!--          id="badge_number"-->
+<!--          name="badge_number"-->
+<!--          min="10000000000"-->
+<!--          max="99999999999"-->
+<!--          placeholder="Badge number"-->
+<!--        />-->
       </div>
       <br />
       <label for="contractor_id">Contractor:</label>
-        <select name="contractor">
+        <select name="contractor" id="contractor_id">
           {% for contractor in contractors %}
             <option value="{{ contractor }}" SELECTED>{{ contractor }}</option>
           {% endfor %}
