@@ -90,14 +90,27 @@ def suspend_ticket(ticket_id):
     db.session.commit()
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
 
+
+# Not perfect function name. Ticket will be marked "WaitingForApproval" not "Done"
+# But from maintainer point of view the ticket will be done
+@ticket_bp.route('/mark_ticket_as_done/<ticket_id>', methods=(['GET', 'POST']))
+def mark_ticket_as_done(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 6
+    db.session.commit()
+    notify_operator_ticket_done()
+    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+
+
 @ticket_bp.route('/show_tickets_status', methods=['GET'])
 @login_required
 def show_tickets_status():
     tickets = Ticket.query.filter_by(reporter_id=current_user.id).all()
     ticket_status = TicketStatus.query.all()
     notifications = get_notifications_from_session()
-    mark_notifications_as_seen( notifications)
+    mark_notifications_as_seen(notifications)
     return render_template('show_tickets_status.html', tickets=tickets, ticket_status=ticket_status)
+
 
 def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
     if notifications is not None:
@@ -130,6 +143,7 @@ def get_notifications_from_session():
     else:
         return
 
+
 def notify_operator(ticket_id, maintainer_id, was_accepted):
     if was_accepted:
         content = "The maintainer: {} has accepted the ticket: {} ".format(ticket_id, maintainer_id)
@@ -140,10 +154,13 @@ def notify_operator(ticket_id, maintainer_id, was_accepted):
     db.session.commit()
 
 
+def notify_operator_ticket_done():
+    pass
+
+
 NOT_READ = 1
 HARDWARE = 1
 DONE = 4
-
 
 
 @ticket_bp.route('/create_ticket', methods=['GET', 'POST'])
@@ -205,6 +222,7 @@ def choose_maintainer():
 
     least_busy_maintainer_id = query[0][0]
     return least_busy_maintainer_id
+
 
 def notify_maintainer(maintainer_id, fault_id):
     try:
