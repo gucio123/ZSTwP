@@ -82,6 +82,14 @@ def decline_ticket(ticket_id):
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=False)
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
 
+
+@ticket_bp.route('/suspend/<ticket_id>', methods=(['GET', 'POST']))
+def suspend_ticket(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 2
+    db.session.commit()
+    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+
 @ticket_bp.route('/show_tickets_status', methods=['GET'])
 @login_required
 def show_tickets_status():
