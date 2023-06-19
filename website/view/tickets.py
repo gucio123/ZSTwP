@@ -14,12 +14,14 @@ from website.auth import update_user_notifications
 
 ticket_bp = Blueprint('/ticket', __name__)
 
+
 def is_user_on_loc(user_latitude, user_longitude, latitude, longitude):
     distance = (pow((user_longitude - longitude), 2) + pow((user_latitude - latitude), 2))
     if distance < 0.001:
         return True
     else:
         return False
+
 
 @ticket_bp.route('/list/<int:maintainer_id>', methods=(['GET', 'POST']))
 def list_faults_per_operator(maintainer_id):
@@ -65,6 +67,7 @@ def list_faults_per_operator(maintainer_id):
             )
         return render_template("ticket_list.html", ticket_with_fault_list=ticket_with_fault_list)
 
+
 @ticket_bp.route('/accept/<ticket_id>', methods=(['GET', 'POST']))
 def accept_ticket(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
@@ -98,7 +101,7 @@ def mark_ticket_as_done(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
     ticket.status_id = 6
     db.session.commit()
-    notify_operator_ticket_done()
+    notify_operator_ticket_done(ticket_id)
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
 
 
@@ -126,6 +129,7 @@ def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: Lis
         update_user_notifications()
         return tickets_with_notifications
 
+
 def mark_notifications_as_seen(notifications: List[Notification]):
     if notifications is not None:
         for notification in notifications:
@@ -133,6 +137,7 @@ def mark_notifications_as_seen(notifications: List[Notification]):
             db.session.delete(notification)
         db.session.commit()
         update_user_notifications()
+
 
 def get_notifications_from_session():
     notifications_as_json = session.get('notifications')
@@ -154,8 +159,12 @@ def notify_operator(ticket_id, maintainer_id, was_accepted):
     db.session.commit()
 
 
-def notify_operator_ticket_done():
-    pass
+def notify_operator_ticket_done(ticket_id):
+    content = "The maintainer: {} has done the ticket: {}. Ticket waits for approval. ".\
+        format(ticket_id, current_user.maintainer_id)
+    operator_notification = Notification(content=content, for_operator=True, ticket_id=ticket_id)
+    db.session.add(operator_notification)
+    db.session.commit()
 
 
 NOT_READ = 1
@@ -199,7 +208,7 @@ def get_faults_without_ticket():
     subquery = (db.session.query(Ticket.fault_id).filter(Ticket.fault_id.isnot(None)).subquery())
     faults = (
         db.session.query(Fault.id).outerjoin(subquery, Fault.id == subquery.c.fault_id).
-        filter(subquery.c.fault_id.is_(None)).all()
+            filter(subquery.c.fault_id.is_(None)).all()
     )
     return [id_[0] for id_ in faults]
 
