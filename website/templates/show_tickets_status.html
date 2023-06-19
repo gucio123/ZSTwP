@@ -8,6 +8,16 @@
         <h3 class="mb-3 text-center">Ticket {{ticket.id}}</h3>
         <label for="ticket_status">Ticket status: {{ ticket.status.status }}</label>
         <br />
+        {% if ticket.status_id == 6 %}
+            <form action="{{ url_for('/ticket.decline_ticket_approval',  ticket_id=ticket.id)}}" method="POST" class="d-inline">
+            <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+            <button type="submit" class="btn btn-danger">Decline approval</button>
+            </form>
+            <form action="{{ url_for('/ticket.approve_ticket',  ticket_id=ticket.id)}}" method="POST" class="d-inline">
+            <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+            <button type="submit" class="btn btn-primary">Approve</button>
+            </form>
+        {% endif %}
     </div>
 {% endfor %}
   </div>

@@ -105,6 +105,24 @@ def mark_ticket_as_done(ticket_id):
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
 
 
+@ticket_bp.route('/approve_ticket/<ticket_id>', methods=(['GET', 'POST']))
+def approve_ticket(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 4
+    db.session.commit()
+    # TODO notify maintainer
+    return redirect(url_for("/ticket.show_tickets_status"))
+
+
+@ticket_bp.route('/decline_ticket_approval/<ticket_id>', methods=(['GET', 'POST']))
+def decline_ticket_approval(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 2
+    db.session.commit()
+    # TODO notify maintainer
+    return redirect(url_for("/ticket.show_tickets_status"))
+
+
 @ticket_bp.route('/show_tickets_status', methods=['GET'])
 @login_required
 def show_tickets_status():
