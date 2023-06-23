@@ -87,15 +87,20 @@
           {% endif %}
           {% if item['ticket_status'] == 2 %}
           <form method="POST" id="myForm">
-
           <button type="submit" class="btn btn-lg btn-primary" formaction="{{  url_for('/ticket.accept_ticket', ticket_id=item['ticket'].id)  }}" id="accpet_ticket_btn_{{ item['ticket'].id }}" >Accept ticket</input>
           <button type="submit" class="btn btn-secondary btn-lg" formaction="{{ url_for('/ticket.decline_ticket', ticket_id=item['ticket'].id)  }}" id="decline_ticket_btn_{{ item['ticket'].id }}">Decline ticket</input>
           </form>
 
           {% elif item['ticket_status'] == 3 %}
-          <h4>Ticket accepted</h4>
+              <h4>Ticket accepted</h4>
+          <form method="POST" id="myForm">
+          <button type="submit" class="btn btn-secondary btn-lg" formaction="{{  url_for('/ticket.suspend_ticket', ticket_id=item['ticket'].id)  }}" id="suspend_ticket_btn_{{ item['ticket'].id }}" >Suspend ticket</input>
+          <button type="submit" class="btn btn-lg btn-primary" formaction="{{ url_for('/ticket.mark_ticket_as_done', ticket_id=item['ticket'].id)  }}" id="decline_ticket_btn_{{ item['ticket'].id }}">Done</input>
+          </form>
           {% elif item['ticket_status'] == 5 %}
           <h4>Ticket declined</h4>
+          {% elif item['ticket_status'] == 6 %}
+          <h4>Ticket done</h4>
           {% endif %}
 
 

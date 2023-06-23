@@ -7,13 +7,11 @@
       <h3 class="mb-3 text-center">Create ticket from fault id</h3>
       <div class="form-group">
         <label for="fault_id">Fault id:</label>
-        <input
-          type="text"
-          class="form-control"
-          id="fault_id"
-          name="fault_id"
-          placeholder="Enter fault id"
-        />
+        <select name="fault">
+          {% for fault in faults %}
+            <option value="{{ fault }}" SELECTED>{{fault }}</option>
+          {% endfor %}
+        </select>
       </div>
       <br />
       <div class="form-group text-center">

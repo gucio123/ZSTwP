@@ -1,6 +1,7 @@
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
+
 from website import db
 from flask import Blueprint, request, flash, render_template, redirect, url_for
 
@@ -71,5 +72,3 @@ def assign_maintainer_to_contractor():
 
     elif request.method == 'GET':
         return render_template('/add_maintainer.html', contractors=contractors)
-
-

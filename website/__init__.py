@@ -18,6 +18,7 @@ def create_app():
     # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://gutowsk2:2xgPg28fNcAWyhSG@mysql.agh.edu.pl/gutowsk2'
     db.init_app(app)
 
+
     from website.views import views
     from website.auth import auth
     from website.view.faults import fault_bp
@@ -26,6 +27,7 @@ def create_app():
     from website.register_contractor import registerContractor
     from website.permissions import permissions
     from website.view.tickets import ticket_bp
+
 
     app.register_blueprint(fault_bp, url_prefix='/faults')
     app.register_blueprint(maintainer_bp, url_prefix='/maintainers')

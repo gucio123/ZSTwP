@@ -14,12 +14,14 @@ from website.auth import update_user_notifications
 
 ticket_bp = Blueprint('/ticket', __name__)
 
+
 def is_user_on_loc(user_latitude, user_longitude, latitude, longitude):
     distance = (pow((user_longitude - longitude), 2) + pow((user_latitude - latitude), 2))
     if distance < 0.001:
         return True
     else:
         return False
+
 
 @ticket_bp.route('/list/<int:maintainer_id>', methods=(['GET', 'POST']))
 def list_faults_per_operator(maintainer_id):
@@ -65,6 +67,7 @@ def list_faults_per_operator(maintainer_id):
             )
         return render_template("ticket_list.html", ticket_with_fault_list=ticket_with_fault_list)
 
+
 @ticket_bp.route('/accept/<ticket_id>', methods=(['GET', 'POST']))
 def accept_ticket(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
@@ -82,14 +85,53 @@ def decline_ticket(ticket_id):
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=False)
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
 
+
+@ticket_bp.route('/suspend/<ticket_id>', methods=(['GET', 'POST']))
+def suspend_ticket(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 2
+    db.session.commit()
+    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+
+
+# Not perfect function name. Ticket will be marked "WaitingForApproval" not "Done"
+# But from maintainer point of view the ticket will be done
+@ticket_bp.route('/mark_ticket_as_done/<ticket_id>', methods=(['GET', 'POST']))
+def mark_ticket_as_done(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 6
+    db.session.commit()
+    notify_operator_ticket_done(ticket_id)
+    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+
+
+@ticket_bp.route('/approve_ticket/<ticket_id>', methods=(['GET', 'POST']))
+def approve_ticket(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 4
+    db.session.commit()
+    # TODO notify maintainer
+    return redirect(url_for("/ticket.show_tickets_status"))
+
+
+@ticket_bp.route('/decline_ticket_approval/<ticket_id>', methods=(['GET', 'POST']))
+def decline_ticket_approval(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    ticket.status_id = 2
+    db.session.commit()
+    # TODO notify maintainer
+    return redirect(url_for("/ticket.show_tickets_status"))
+
+
 @ticket_bp.route('/show_tickets_status', methods=['GET'])
 @login_required
 def show_tickets_status():
     tickets = Ticket.query.filter_by(reporter_id=current_user.id).all()
     ticket_status = TicketStatus.query.all()
     notifications = get_notifications_from_session()
-    mark_notifications_as_seen( notifications)
+    mark_notifications_as_seen(notifications)
     return render_template('show_tickets_status.html', tickets=tickets, ticket_status=ticket_status)
+
 
 def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
     if notifications is not None:
@@ -105,6 +147,7 @@ def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: Lis
         update_user_notifications()
         return tickets_with_notifications
 
+
 def mark_notifications_as_seen(notifications: List[Notification]):
     if notifications is not None:
         for notification in notifications:
@@ -112,6 +155,7 @@ def mark_notifications_as_seen(notifications: List[Notification]):
             db.session.delete(notification)
         db.session.commit()
         update_user_notifications()
+
 
 def get_notifications_from_session():
     notifications_as_json = session.get('notifications')
@@ -121,6 +165,7 @@ def get_notifications_from_session():
         return notifications
     else:
         return
+
 
 def notify_operator(ticket_id, maintainer_id, was_accepted):
     if was_accepted:
@@ -132,62 +177,58 @@ def notify_operator(ticket_id, maintainer_id, was_accepted):
     db.session.commit()
 
 
+def notify_operator_ticket_done(ticket_id):
+    content = "The maintainer: {} has done the ticket: {}. Ticket waits for approval. ".\
+        format(ticket_id, current_user.maintainer_id)
+    operator_notification = Notification(content=content, for_operator=True, ticket_id=ticket_id)
+    db.session.add(operator_notification)
+    db.session.commit()
+
+
 NOT_READ = 1
 HARDWARE = 1
 DONE = 4
 
 
-
-
 @ticket_bp.route('/create_ticket', methods=['GET', 'POST'])
 @login_required
 def create_ticket():
+    faults = get_faults_without_ticket()
     if request.method == 'POST':
-
-        fault_id = request.form.get('fault_id')
-        fault = Fault.query.filter_by(id=fault_id).first()
-
-        if fault is None:
-            info = f'Unable to create ticket! Check if fault {fault_id} exists'
-            flash(info, category='error')
-            return render_template("create_ticket.html")
-
+        fault_query = request.form['fault']
+        fault = Fault.query.filter_by(id=fault_query).first()
         reporter_id = current_user.id
         status_id = NOT_READ
         maintainer_id = choose_maintainer()
-
         is_physical_assistance_required = is_assistance_required(fault)
         reported_date = datetime.now()
         due_date = calculate_due_date(fault.severity_id)
-
         try:
-            new_ticket = Ticket(status_id=status_id, fault_id=fault_id, reporter_id=reporter_id,
+            new_ticket = Ticket(status_id=status_id, fault_id=fault.id, reporter_id=reporter_id,
                                 maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
                                 physical_assistance_req=is_physical_assistance_required)
-
-
             db.session.add(new_ticket)
-
-            ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
-            notification_content = "There was a ticket assigned to you for fault: {}".format(fault.description)
-            new_notification = Notification(ticket_id=ticket.id, content=notification_content)
-            db.session.add(new_notification)
-            notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
-            # maintainer = Maintainer.query.filter_by(id=maintainer_id).first()
-            user = User.query.filter_by(maintainer_id=maintainer_id).first()
-            new_notification_user_relationship = NotificationUser(user_id=user.id, notification_id=notification.id)
-            db.session.add(new_notification_user_relationship)
-
             db.session.commit()
         except:
-
             db.session.rollback()
             flash('Error: failed to insert new ticket', category='error')
-            return render_template("create_ticket.html")
+            return render_template("create_ticket.html", faults=faults)
 
         flash("Ticket created!", category="success")
-        notify_maintainer(maintainer_id)
-    return render_template("create_ticket.html")
+        notify_maintainer(maintainer_id, fault.id)
+        faults = get_faults_without_ticket()
+        return render_template("create_ticket.html", faults=faults)
+    elif request.method == 'GET':
+        return render_template("create_ticket.html", faults=faults)
+
+
+def get_faults_without_ticket():
+    subquery = (db.session.query(Ticket.fault_id).filter(Ticket.fault_id.isnot(None)).subquery())
+    faults = (
+        db.session.query(Fault.id).outerjoin(subquery, Fault.id == subquery.c.fault_id).
+            filter(subquery.c.fault_id.is_(None)).all()
+    )
+    return [id_[0] for id_ in faults]
 
 
 def is_assistance_required(fault):
@@ -200,18 +241,26 @@ def calculate_due_date(severity_id):
 
 
 def choose_maintainer():
+    subquery = db.session.query(Ticket.maintainer_id, db.func.count(Ticket.id).label('ticket_count')) \
+        .filter(Ticket.status_id != DONE).group_by(Ticket.maintainer_id).subquery()
 
-    subquery = db.session.query(Ticket.maintainer_id, db.func.count(Ticket.id).label('ticket_count'))\
-            .filter(Ticket.status_id != DONE).group_by(Ticket.maintainer_id).subquery()
-
-    query = db.session.query(Maintainer.id, subquery.c.ticket_count.label('ticket_count'))\
+    query = db.session.query(Maintainer.id, subquery.c.ticket_count.label('ticket_count')) \
         .outerjoin(subquery, Maintainer.id == subquery.c.maintainer_id).order_by(subquery.c.ticket_count.asc())
 
     least_busy_maintainer_id = query[0][0]
     return least_busy_maintainer_id
 
 
-# TODO send email
-# TODO make notification
-def notify_maintainer(maintainer_id):
-    print(f'Maintainer {maintainer_id} has new ticket')
+def notify_maintainer(maintainer_id, fault_id):
+    try:
+        ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
+        content = "New ticket with id: {} was created!".format(ticket.id)
+        new_notification = Notification(ticket_id=ticket.id, content=content)
+        db.session.add(new_notification)
+        notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
+        user = User.query.filter_by(maintainer_id=maintainer_id).first()
+        new_notification_user_relationship = NotificationUser(user_id=user.id, notification_id=notification.id)
+        db.session.add(new_notification_user_relationship)
+        db.session.commit()
+    except:
+        db.session.rollback()

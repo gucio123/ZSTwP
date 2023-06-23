@@ -60,6 +60,7 @@ class TicketStatus(db.Model):
     id = Column(Integer, primary_key=True)
     status = Column(String(50))
 
+
 class Notification(db.Model):
     __tablename__ = 'notification'
     id = Column(Integer, primary_key=True)

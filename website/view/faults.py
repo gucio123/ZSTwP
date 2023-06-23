@@ -1,5 +1,6 @@
 from flask_login import login_required, current_user
 
+
 from website import db
 from flask import Blueprint, request, flash, render_template, abort
 
