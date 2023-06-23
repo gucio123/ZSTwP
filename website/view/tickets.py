@@ -1,5 +1,6 @@
 from datetime import timedelta, date, datetime
 
+from sqlalchemy import or_
 from typing import List
 from urllib.request import urlopen
 
@@ -81,6 +82,7 @@ def accept_ticket(ticket_id):
 def decline_ticket(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
     ticket.status_id = 5
+    ticket.maintainer_id = None
     db.session.commit()
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=False)
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
@@ -110,7 +112,8 @@ def approve_ticket(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
     ticket.status_id = 4
     db.session.commit()
-    # TODO notify maintainer
+    fault = Fault.query.filter_by(id=ticket.fault_id).first()
+    notify_maintainer(ticket.maintainer_id, fault.id, was_accepted=True)
     return redirect(url_for("/ticket.show_tickets_status"))
 
 
@@ -119,7 +122,8 @@ def decline_ticket_approval(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
     ticket.status_id = 2
     db.session.commit()
-    # TODO notify maintainer
+    fault = Fault.query.filter_by(id=ticket.fault_id).first()
+    notify_maintainer(ticket.maintainer_id, fault.id, was_declined=True)
     return redirect(url_for("/ticket.show_tickets_status"))
 
 
@@ -204,10 +208,18 @@ def create_ticket():
         reported_date = datetime.now()
         due_date = calculate_due_date(fault.severity_id)
         try:
-            new_ticket = Ticket(status_id=status_id, fault_id=fault.id, reporter_id=reporter_id,
-                                maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
-                                physical_assistance_req=is_physical_assistance_required)
-            db.session.add(new_ticket)
+            existing_ticket = Ticket.query.filter_by(fault_id=fault.id).first()
+            if existing_ticket:
+                existing_ticket.maintainer_id = maintainer_id
+                existing_ticket.reported_date = reported_date
+                existing_ticket.due_date = due_date
+                existing_ticket.status_id = NOT_READ
+                existing_ticket.reporter_id = reporter_id
+            else:
+                new_ticket = Ticket(status_id=status_id, fault_id=fault.id, reporter_id=reporter_id,
+                                    maintainer_id=maintainer_id, reported_date=reported_date, due_date=due_date,
+                                    physical_assistance_req=is_physical_assistance_required)
+                db.session.add(new_ticket)
             db.session.commit()
         except:
             db.session.rollback()
@@ -223,10 +235,10 @@ def create_ticket():
 
 
 def get_faults_without_ticket():
-    subquery = (db.session.query(Ticket.fault_id).filter(Ticket.fault_id.isnot(None)).subquery())
+    subquery = (db.session.query(Ticket).filter(or_(Ticket.fault_id.isnot(None), Ticket.status_id == 5)).subquery())
     faults = (
         db.session.query(Fault.id).outerjoin(subquery, Fault.id == subquery.c.fault_id).
-            filter(subquery.c.fault_id.is_(None)).all()
+            filter(or_(subquery.c.fault_id.is_(None), subquery.c.status_id == 5)).all()
     )
     return [id_[0] for id_ in faults]
 
@@ -251,10 +263,16 @@ def choose_maintainer():
     return least_busy_maintainer_id
 
 
-def notify_maintainer(maintainer_id, fault_id):
+def notify_maintainer(maintainer_id, fault_id, was_declined=False, was_accepted=False):
     try:
         ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
-        content = "New ticket with id: {} was created!".format(ticket.id)
+        # TODO: Na podstawie np. contentu oznaczyc we frontendzie tickety z powiadomieniami na zielono/czerwono?
+        if was_declined:
+            content = "Ticket was declined! Please finish the job".format(ticket.id)
+        elif was_accepted:
+            content = "Ticket was accepted! Good job, ticket done.".format(ticket.id)
+        else:
+            content = "New ticket with id: {} was created!".format(ticket.id)
         new_notification = Notification(ticket_id=ticket.id, content=content)
         db.session.add(new_notification)
         notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
