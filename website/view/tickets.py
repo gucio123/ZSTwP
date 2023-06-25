@@ -130,7 +130,7 @@ def decline_ticket_approval(ticket_id):
 @ticket_bp.route('/show_tickets_status', methods=['GET'])
 @login_required
 def show_tickets_status():
-    tickets = Ticket.query.filter_by(reporter_id=current_user.id).all()
+    tickets = Ticket.query.all()
     ticket_status = TicketStatus.query.all()
     notifications = get_notifications_from_session()
     mark_notifications_as_seen(notifications)
