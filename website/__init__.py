@@ -20,19 +20,22 @@ def create_app():
 
     from .views import views
     from .auth import auth
-    from .faults import fault_bp
-    from .maintainers import maintainer_bp
-    from .create_ticket import createTicket
-    from .register_contractor import registerContractor
-    from .permissions import permissions
+    from website.view.faults import fault_bp
+    from website.view.maintainers import maintainer_bp
+
+
+
+
+
+    import website.create_ticket
+    import website.register_contractor
 
     app.register_blueprint(fault_bp, url_prefix='/faults')
     app.register_blueprint(maintainer_bp, url_prefix='/maintainers')
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(createTicket, url_prefix='/')
-    app.register_blueprint(registerContractor, url_prefix='/')
-    app.register_blueprint(permissions, url_prefix='/')
+    app.register_blueprint(create_ticket.bp)
+    app.register_blueprint(register_contractor.bp)
 
     with app.app_context():
         db.create_all()

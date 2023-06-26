@@ -1,17 +1,17 @@
 from flask import Blueprint, request, render_template, flash
 from flask_login import login_required, current_user
 from datetime import datetime, date, timedelta
-from .models import Ticket, Fault, Maintainer
-from . import db
+from website.models import Ticket, Fault, Maintainer
+from website import db
 
 NOT_READ = 1
 HARDWARE = 1
 DONE = 4
 
-createTicket = Blueprint('create-ticket', __name__)
+bp = Blueprint('create-ticket', __name__)
 
 
-@createTicket.route('/create_ticket', methods=['GET', 'POST'])
+@bp.route('/create_ticket', methods=['GET', 'POST'])
 @login_required
 def create_ticket():
     if request.method == 'POST':
