@@ -9,21 +9,18 @@ permissions = Blueprint('permissions', __name__)
 @login_required
 def admin_panel():
 
-    if request.method == 'POST':
-        user_id = request.form.get('user_id')
-        user = User.query.get(user_id)
-        if user.isAdmin:
-            flash('This user is already an admin.', 'warning')
-        else:
-            user.isAdmin = True
-            db.session.commit()
+    users = User.query.all()
+    # TESTOWE PRINTY, NIC NIE WYPLUWA 
+    print(current_user.isAdmin)
+    for user in users:
+        print(user.username, user.email)
 
-        return redirect(url_for('permissions.admin_panel'))
-    
-    users = User.query.all()    
+    db.session.add(users)
     db.session.commit()
-    return render_template('admin.html', users = users)
+    return render_template('/admin.html', user = users)
 
-
+# @permissions.route('/admin', methods = ['GET', 'POST'])
+# @login_required
+# def assign_admin():
 
 

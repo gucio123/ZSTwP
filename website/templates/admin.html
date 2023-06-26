@@ -19,7 +19,7 @@
         <td>{{ "Yes" if user.isAdmin else "No" }}</td>
         <td>
           {% if current_user.isAdmin %}
-            <form action="{{ url_for('permissions.admin_panel') }}" method="POST" class="d-inline">
+            <form action="{{ url_for('assign_admin') }}" method="POST" class="d-inline">
               <input type="hidden" name="user_id" value="{{ user.id }}">
               <button type="submit" class="btn btn-primary">Assign Admin</button>
             </form>
@@ -27,17 +27,6 @@
         </td>
       </tr>
     {% endfor %}
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-          const closeButtons = document.querySelectorAll('.flash-message .close');
-          closeButtons.forEach(function (button) {
-              button.addEventListener('click', function () {
-                  const flashMessage = this.parentNode;
-                  flashMessage.style.display = 'none';
-              });
-          });
-      });
-  </script>
   </tbody>
 </table>
 
