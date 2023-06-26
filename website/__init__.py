@@ -23,7 +23,6 @@ def create_app():
     from website.auth import auth
     from website.view.faults import fault_bp
     from website.view.maintainers import maintainer_bp
-    # from website.create_ticket import createTicket
     from website.register_contractor import registerContractor
     from website.permissions import permissions
     from website.view.tickets import ticket_bp
