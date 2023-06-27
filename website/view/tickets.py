@@ -156,8 +156,7 @@ def show_tickets_status():
 
 
 def get_all_undone_tickets(current_user_id):
-    tickets = (db.session.query(Ticket).join(TicketStatus, Ticket.status_id == TicketStatus.id)
-               .filter(Ticket.reporter_id == current_user_id, TicketStatus.status != 'Done').all())
+    tickets = (db.session.query(Ticket).join(TicketStatus, Ticket.status_id == TicketStatus.id).all())
     return tickets
 
 
