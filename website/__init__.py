@@ -11,10 +11,10 @@ def create_app():
     # pymysql.install_as_MySQLdb()
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'LDKQWH489312NDKL'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://gutowski:C7xTrPPcz8XefYnt@mysql.agh.edu.pl/gutowski'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://gutowski:C7xTrPPcz8XefYnt@mysql.agh.edu.pl/gutowski'
 
     # Production database, don't use until needed
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://mikolek:gCe1Zn893jk7Awun@mysql.agh.edu.pl/mikolek'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://mikolek:gCe1Zn893jk7Awun@mysql.agh.edu.pl/mikolek'
     # app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://gutowsk2:2xgPg28fNcAWyhSG@mysql.agh.edu.pl/gutowsk2'
     db.init_app(app)
 
@@ -36,7 +36,7 @@ def create_app():
     app.register_blueprint(permissions, url_prefix='/permissions')
 
     app.register_blueprint(ticket_bp, url_prefix='/tickets')
-    app.register_blueprint(registerContractor, url_prefix='/registerContractor')
+    app.register_blueprint(registerContractor, url_prefix='/')
 
 
 

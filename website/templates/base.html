@@ -26,7 +26,7 @@
 
     span.num {
 
-      color: #ee1313; 
+      color: #ee1313;
       font-size: 14px;
       margin-left: 0px;
       margin-right: 1px;
@@ -129,10 +129,8 @@
           {% endfor %}
           {{counter.value}}
         </span>
-        <!-- </a> -->
         {% endif %}
 
-        <a class="nav-item nav-link" id="notification_fault" href="/faults">Fault Notification</a>
         {% endif %}
         {% if current_user.isAdmin %}
         <a class="nav-item nav-link" id="create_ticket" href="/tickets/create_ticket">Create Ticket</a>
@@ -141,15 +139,15 @@
         {% if current_user.isOperator == 1 %}
         <a class="nav-item nav-link" id="show_tickets_status" href="/tickets/show_tickets_status">Show
           tickets </a>
-          <span class="notification-count num">
-            {% set counter = namespace(value=0) %}
-            {% for notification in session['notifications'] %}
-            {% if (notification.get('was_seen') == 0 and notification.get('ticket_id')) %}
-            {% set counter.value = counter.value + 1 %}
-            {% endif %}
-            {% endfor %}
-            {{ counter.value }}
-          </span>
+        <span class="notification-count num">
+          {% set counter = namespace(value=0) %}
+          {% for notification in session['notifications'] %}
+          {% if (notification.get('was_seen') == 0 and notification.get('ticket_id')) %}
+          {% set counter.value = counter.value + 1 %}
+          {% endif %}
+          {% endfor %}
+          {{ counter.value }}
+        </span>
         {% endif %}
         {% if not current_user.is_authenticated %}
         <a class="nav-item nav-link" id="login" href="/auth/login">Login</a>
