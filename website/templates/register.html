@@ -1,56 +1,106 @@
-{% extends "base.html" %}
-{% block title %}Sign Up{% endblock %}
+{% extends "base.html" %} 
+{% block title %}Sign Up{% endblock %} 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center">
-  <form method="POST" class="col-md-6">
-    <h3 class="mb-3 text-center">Sign Up</h3>
-    <div class="form-group">
-      <label for="email">Email Address</label>
-      <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" />
-    </div>
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" />
-    </div>
-    <div class="form-group">
-      <label for="pswd1">Password</label>
-      <input type="password" class="form-control" id="pswd1" name="pswd1" placeholder="Enter password" />
-    </div>
-    <div class="form-group">
-      <label for="pswd2">Password (Confirm)</label>
-      <input type="password" class="form-control" id="pswd2" name="pswd2" placeholder="Confirm password" />
+  <div class="container d-flex justify-content-center align-items-center">
+    <form method="POST" class="col-md-6">
+      <h3 class="mb-3 text-center">Sign Up</h3>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          name="email"
+          placeholder="Enter email"
+        />
+      </div>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          name="username"
+          placeholder="Enter username"
+        />
+      </div>
+      <div class="form-group">
+        <label for="pswd1">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="pswd1"
+          name="pswd1"
+          placeholder="Enter password"
+        />
+      </div>
+      <div class="form-group">
+        <label for="pswd2">Password (Confirm)</label>
+        <input
+          type="password"
+          class="form-control"
+          id="pswd2"
+          name="pswd2"
+          placeholder="Confirm password"
+        />
       <div class="form-group">
         <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Name" />
-        <div class="form-group">
-          <label for="surname">Surname</label>
-          <input type="text" class="form-control" id="surname" name="surname" placeholder="Surname" />
-          <div class="form-group">
-            <label for="phone">Phone</label>
-            <input type="number" class="form-control" id="phone" name="phone" min="100000000" max="999999999"
-              placeholder="Phone" />
-            <div class="form-group">
-              <label for="badge_number">Badge number</label>
-              <input type="number" class="form-control" id="badge_number" name="badge_number" min="10000000000"
-                max="99999999999" placeholder="Badge number" />
-            </div>
-            <br />
-            <div class="form-group text-center">
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          placeholder="Name"
+        />
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input
+          type="text"
+          class="form-control"
+          id="surname"
+          name="surname"
+          placeholder="Surname"
+        />
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input
+          type="number"
+          class="form-control"
+          id="phone"
+          name="phone"
+          min="100000000"
+          max="999999999"
+          placeholder="Phone"
+        />
+      <div class="form-group">
+        <label for="badge_number">Badge number</label>
+        <input
+          type="number"
+          class="form-control"
+          id="badge_number"
+          name="badge_number"
+          min="10000000000"
+          max="99999999999"
+          placeholder="Badge number"
+        />
+      </div>
+      <br />
+      <div class="form-group text-center">
+      <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
 
-            <script>
-              document.addEventListener('DOMContentLoaded', function () {
-                const closeButtons = document.querySelectorAll('.flash-message .close');
-                closeButtons.forEach(function (button) {
-                  button.addEventListener('click', function () {
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const closeButtons = document.querySelectorAll('.flash-message .close');
+            closeButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
                     const flashMessage = this.parentNode;
                     flashMessage.style.display = 'none';
-                  });
                 });
-              });
-            </script>
-
-  </form>
-</div>
+            });
+        });
+    </script>
+    
+    </form>
+  </div>
 {% endblock %}

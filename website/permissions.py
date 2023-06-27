@@ -5,8 +5,6 @@ from . import db
 
 
 permissions = Blueprint('permissions', __name__)
-
-
 @permissions.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin_panel():
@@ -21,11 +19,10 @@ def admin_panel():
             db.session.commit()
 
         return redirect(url_for('permissions.admin_panel'))
-
-    users = User.query.all()
+    
+    users = User.query.all()    
     db.session.commit()
-    return render_template('admin.html', users=users)
-
+    return render_template('admin.html', users = users)
 
 @permissions.route('/operator', methods=['GET', 'POST'])
 @login_required
@@ -45,8 +42,7 @@ def operator_panel():
     db.session.commit()
     return render_template('admin.html', users=users)
 
-
-@permissions.route('/admin/remove', methods=['GET', 'POST'])
+@permissions.route('/admin/remove', methods = ['GET', 'POST'])
 @login_required
 def remove_admin():
     if request.method == 'POST':
@@ -62,10 +58,9 @@ def remove_admin():
 
     users = User.query.all()
     db.session.commit()
-    return render_template('/admin', users=users)
+    return render_template('/admin', users = users)
 
-
-@permissions.route('/operator/remove', methods=['GET', 'POST'])
+@permissions.route('/operator/remove', methods = ['GET', 'POST'])
 @login_required
 def remove_operator():
     if request.method == 'POST':
@@ -81,4 +76,11 @@ def remove_operator():
 
     users = User.query.all()
     db.session.commit()
-    return render_template('/admin', users=users)
+    return render_template('/admin', users = users)
+
+
+
+
+
+
+

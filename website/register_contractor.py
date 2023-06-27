@@ -41,6 +41,7 @@ def is_input_data_correct(company_name, nip):
     return True
 
 
+# NIP should have 10 numbers and have correct checksum
 def is_nip_format_correct(nip):
     if len(nip) != 10:
         return False

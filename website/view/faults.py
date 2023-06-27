@@ -21,19 +21,27 @@ def report_fault():
         device_serial_number = request.form['device_serial_number']
         category = request.form['category_id']
         severity = request.form['severity_id']
-        category_id = FaultCategory.query.filter_by(
-            category=category).first().id
-        severity_id = FaultSeverity.query.filter_by(
-            severity=severity).first().id
+        category_id = FaultCategory.query.filter_by(category=category).first().id
+        severity_id = FaultSeverity.query.filter_by(severity=severity).first().id
+        # maintainer_id = current_user.maintainer_id
 
         try:
             fault = Fault(latitude=latitude, longitude=longitude, description=description,
                           device_serial_number=device_serial_number, category_id=category_id,
                           severity_id=severity_id)
+            # TODO MAINTAINER NOTIFICATION
+            # TODO Notifications are generated when a ticket is created, also there ticket is mapped to maintainer
+            # maintainer = Maintainer.query.get(maintainer_id)
+            # notification_content = f"A new fault has been commissioned for you. Fault ID: {fault.id}"
+            # notification = Notification(content=notification_content,
+            #                             user_id=maintainer.user_id,
+            #                             status="unread")
+            # db.session.add(notification)
             db.session.add(fault)
             db.session.commit()
             categories = [c.category for c in FaultCategory.query.all()]
             severities = [s.severity for s in FaultSeverity.query.all()]
+
 
         except db.IntegrityError:
             flash('Error: failed to add new fault', category='error')
@@ -41,6 +49,7 @@ def report_fault():
 
         flash("Fault created!", category="success")
         return render_template('/report_fault.html', categories=categories, severities=severities, successful=True)
+
 
     elif request.method == 'GET':
         categories = [c.category for c in FaultCategory.query.all()]
@@ -51,4 +60,8 @@ def report_fault():
 @fault_bp.route('/list', methods=(['GET']))
 def list_faults():
     faults = Fault.query.all()
+    # Uncomment to return faults as json
+    # faults = [f.serialize() for f in faults]
+    # return jsonify(faults)
     return render_template("fault_list.html", faults=faults)
+

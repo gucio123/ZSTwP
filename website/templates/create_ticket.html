@@ -2,34 +2,34 @@
 {% block title %}Create ticket from fault{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center">
-  <form method="POST" class="col-md-6">
-    <h3 class="mb-3 text-center">Create ticket from fault id</h3>
-    <div class="form-group">
-      <label for="fault_id">Fault id:</label>
-      <select name="fault">
-        {% for fault in faults %}
-        <option value="{{ fault }}" SELECTED>{{fault }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <br />
-    <div class="form-group text-center">
+  <div class="container d-flex justify-content-center align-items-center">
+    <form method="POST" class="col-md-6">
+      <h3 class="mb-3 text-center">Create ticket from fault id</h3>
+      <div class="form-group">
+        <label for="fault_id">Fault id:</label>
+        <select name="fault">
+          {% for fault in faults %}
+            <option value="{{ fault }}" SELECTED>{{fault }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <br />
+      <div class="form-group text-center">
       <button type="submit" class="btn btn-primary">Create ticket</button>
-    </div>
+      </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const closeButtons = document.querySelectorAll('.flash-message .close');
-        closeButtons.forEach(function (button) {
-          button.addEventListener('click', function () {
-            const flashMessage = this.parentNode;
-            flashMessage.style.display = 'none';
-          });
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const closeButtons = document.querySelectorAll('.flash-message .close');
+            closeButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const flashMessage = this.parentNode;
+                    flashMessage.style.display = 'none';
+                });
+            });
         });
-      });
     </script>
 
-  </form>
-</div>
+    </form>
+  </div>
 {% endblock %}

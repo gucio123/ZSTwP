@@ -35,8 +35,8 @@ class Contractor(db.Model):
 class Maintainer(db.Model):
     __tablename__ = 'maintainer'
     id = Column(Integer, primary_key=True)
-    name = Column(String(50))
-    surname = Column(String(50))
+    name = Column(String(50))    
+    surname = Column(String(50))    
     phone = Column(Integer)
     contractor_id = Column(Integer, ForeignKey('contractor.id'))
 
@@ -66,6 +66,11 @@ class Notification(db.Model):
     id = Column(Integer, primary_key=True)
     content = Column(String(500))
     was_seen = Column(Boolean, default=False)
+    # for_admin and for_operator are created with the intention to use when a notification should be visible for all operators or admins.
+    # There will be one notification in the database, but multiple NotificationUser entries, so it will be easy to check if a user should
+    # have a notification visible.
+    # TODO: Add trigger in database for inserting NotificationUser entries when one of these fields is set to true so it doesn't have to
+    # TODO: be added from flask. For now these fields don't have any particular meaning.
     for_admin = Column(Boolean, default=False)
     for_operator = Column(Boolean, default=False)
     ticket_id = Column(Integer, ForeignKey('ticket.id'))
@@ -83,6 +88,7 @@ class Notification(db.Model):
 
 
 class NotificationUser(db.Model):
+    # This is the table used for mapping a many-to-many relationship between users and notifications
     __tablename__ = 'notification_user'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
@@ -127,7 +133,10 @@ class FaultSeverity(db.Model):
     severity = Column(String(500))
 
 
+# class FaultCategory(db.Model):
 class FaultCategory(db.Model):
     __tablename__ = 'fault_category'
     id = Column(Integer, primary_key=True)
     category = Column(String(500))
+
+
