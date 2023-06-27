@@ -14,7 +14,6 @@
   </thead>
   <tbody>
     {% for user in users %}
-<<<<<<< HEAD
     <tr>
       <td>{{ user.username }}</td>
       <td>{{ user.email }}</td>
@@ -30,39 +29,6 @@
           <input type="hidden" name="user_id" value="{{ user.id }}">
           <button type="submit" class="btn btn-primary">Assign Operator</button>
         </form>
-=======
-      <tr>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ "Yes" if user.isAdmin else "No" }}</td>
-        <td>{{ "Yes" if user.isOperator else "No" }}</td>
-        <td>
-          {% if current_user.isAdmin %}
-          {% if not user.isAdmin %}
-            <form action="{{ url_for('permissions.admin_panel') }}" method="POST" class="d-inline">
-              <input type="hidden" name="user_id" value="{{ user.id }}">
-              <button type="submit" class="btn btn-primary">Assign Admin</button>
-            </form>
-          {% endif %}
-          {% if not user.isOperator %}
-            <form action="{{ url_for('permissions.operator_panel') }}" method="POST" class="d-inline">
-              <input type="hidden" name="user_id" value="{{ user.id }}">
-              <button type="submit" class="btn btn-primary">Assign Operator</button>
-            </form>
-          {% endif %}
-          {% endif %}
-          {% if user.isAdmin %}
-          <form action="{{ url_for('permissions.remove_admin') }}" method="POST" class="d-inline">
-            <input type="hidden" name="user_id" value="{{ user.id }}">
-            <button type="submit" class="btn btn-danger">Remove Admin</button>
-          </form>
-          {% endif %}
-          {% if user.isOperator %}
-          <form action="{{ url_for('permissions.remove_operator') }}" method="POST" class="d-inline">
-            <input type="hidden" name="user_id" value="{{ user.id }}">
-            <button type="submit" class="btn btn-danger">Remove Operator</button>
-          </form>
->>>>>>> 3bb09ef4e25b6c95112c375b730d5d0d9a4a91a8
         {% endif %}
         {% if user.isAdmin %}
         <form action="{{ url_for('permissions.remove_admin') }}" method="POST" class="d-inline">
