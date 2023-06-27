@@ -48,7 +48,6 @@ def is_nip_format_correct(nip):
     elif not nip.isnumeric():
         return False
     elif not is_checksum_correct(nip):
-        print('checksum not correct')
         return False
     return True
 

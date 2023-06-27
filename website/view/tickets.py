@@ -41,7 +41,7 @@ def list_faults_per_operator(maintainer_id):
         user_latitude = float(location.split(',')[0])
         user_longitude = float((location.split(',')[1]))
 
-        tickets = Ticket.query.filter_by(maintainer_id=maintainer_id).all()
+        tickets = get_all_active_tickets_for_maintainer(maintainer_id)
         if len(tickets) == 0:
             return render_template("ticket_list.html")
         ticket_with_fault_list = []
@@ -67,6 +67,13 @@ def list_faults_per_operator(maintainer_id):
                  }
             )
         return render_template("ticket_list.html", ticket_with_fault_list=ticket_with_fault_list)
+
+
+def get_all_active_tickets_for_maintainer(maintainer_id):
+    tickets = (db.session.query(Ticket).join(TicketStatus, Ticket.status_id == TicketStatus.id)
+               .filter(Ticket.maintainer_id == maintainer_id, TicketStatus.status != 'Done',
+               TicketStatus.status != 'Declined').all())
+    return tickets
 
 
 @ticket_bp.route('/accept/<ticket_id>', methods=(['GET', 'POST']))
@@ -130,11 +137,17 @@ def decline_ticket_approval(ticket_id):
 @ticket_bp.route('/show_tickets_status', methods=['GET'])
 @login_required
 def show_tickets_status():
-    tickets = Ticket.query.all()
+    tickets = get_all_undone_tickets(current_user.id)
     ticket_status = TicketStatus.query.all()
     notifications = get_notifications_from_session()
     mark_notifications_as_seen(notifications)
     return render_template('show_tickets_status.html', tickets=tickets, ticket_status=ticket_status)
+
+
+def get_all_undone_tickets(current_user_id):
+    tickets = (db.session.query(Ticket).join(TicketStatus, Ticket.status_id == TicketStatus.id)
+               .filter(Ticket.reporter_id == current_user_id, TicketStatus.status != 'Done').all())
+    return tickets
 
 
 def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
