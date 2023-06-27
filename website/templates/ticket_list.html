@@ -6,119 +6,138 @@
   {% if ticket_with_fault_list is not defined %}
   <h2>You have no assigned tickets. Enjoy the free time!</h2>
   {% endif %}
-  {% for item in ticket_with_fault_list %}
 
-  <div class="row border rounded overflow-hidden position-relative ">
-    <div class="col p-4">
-      <h4 class="mb-3 text-center">Ticket {{item['ticket'].id}}</h4>
-      <br />
-      <label for="reported_date">Reported date::</label>
-      <br />
-      <div id="reported_date">
-        {{ item['ticket'].reported_date}}
-      </div>
-      <br />
-      <label for="due_date">Due date:</label>
-      <br />
-      <div id="due_date">
-        {{ item['ticket'].due_date}}
-      </div>
-      <br />
-      <label for="physical_assistance_required">Is physical assistance requred?</label>
-      <br />
-      <div id="physical_assistance_required">
-        {%if item['ticket'].physical_assistance_req != 0 %}
-        Yes
-        {% else %}
-        No
-        {% endif %}
-      </div>
-      <br />
-      <label for="reporter_username">Reporter:</label>
-      <br />
-      <div id="reporter_username">
-        User: {{ item['reporter'].username}}
-      </div>
-      <br />
-      <div id="reporter_email">
-        Email: {{ item['reporter'].email}}
-      </div>
-      <br />
-    </div>
+  <div class="container">
+    {% for item in ticket_with_fault_list %}
+
+    <style>
+      .btn-accept {
+        font-weight: normal;
+        font-size: 16px;
+      }
+      .btn-decline {
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+    </style>
 
     <div class="row border rounded overflow-hidden position-relative ">
       <div class="col p-4">
-        <h5 class="mb-3 text-center">Fault {{item['fault'].id}}</h5>
-        <br />
-
-        <br />
-        <label for="fault_description">Description:</label>
-        <br />
-        <div id="fault_description">
-          {{ item['fault'].description}}
-        </div>
-        <br />
-        <label for="category">Category:</label>
-        <br />
-        <div id="category">
-          {{ item['fault'].category_id}}
-        </div>
-        <br />
-        <label for="severity">Seveirty:</label>
-        <br />
-        <div id="severity">
-          {{ item['fault'].severity_id}}
-        </div>
-        <br />
-        <label for="coords">Coordinates:</label>
-        <br />
-        <div id="coords">
-          Lat: {{ item['fault'].latitude}}
+        <div class="text-center">
+          <h4 class="mb-3">Ticket {{item['ticket'].id}}</h4>
           <br />
-          Lon: {{ item['fault'].longitude }}
+          <label for="reported_date" class="font-weight-bold">Reported date:</label>
+          <br />
+          <div id="reported_date">
+            {{ item['ticket'].reported_date}}
+          </div>
+          <br />
+          <label for="due_date" class="font-weight-bold">Due date:</label>
+          <br />
+          <div id="due_date">
+            {{ item['ticket'].due_date}}
+          </div>
+          <br />
+          <label for="physical_assistance_required" class="font-weight-bold">Is physical assistance required?</label>
+          <br />
+          <div id="physical_assistance_required">
+            {%if item['ticket'].physical_assistance_req != 0 %}
+            Yes
+            {% else %}
+            No
+            {% endif %}
+          </div>
+          <br />
+          <label for="reporter_username" class="font-weight-bold">Reporter:</label>
+          <br />
+          <div id="reporter_username">
+            User: {{ item['reporter'].username}}
+          </div>
+          <br />
+          <div id="reporter_email">
+            Email: {{ item['reporter'].email}}
+          </div>
+          <br />
+
+          <div class="row border rounded overflow-hidden position-relative ">
+            <div class="col p-4">
+              <h5 class="mb-3 text-center">Fault {{item['fault'].id}}</h5>
+              <br />
+
+              <br />
+              <label for="fault_description" class="font-weight-bold">Description:</label>
+              <br />
+              <div id="fault_description">
+                {{ item['fault'].description}}
+              </div>
+              <br />
+              <label for="category" class="font-weight-bold">Category:</label>
+              <br />
+              <div id="category">
+                {{ item['fault'].category_id}}
+              </div>
+              <br />
+              <label for="severity" class="font-weight-bold">Severity:</label>
+              <br />
+              <div id="severity">
+                {{ item['fault'].severity_id}}
+              </div>
+              <br />
+              <label for="coords" class="font-weight-bold">Coordinates:</label>
+              <br />
+              <div id="coords">
+                Latitude: {{ item['fault'].latitude}}
+                <br />
+                Longitude: {{ item['fault'].longitude }}
+              </div>
+              <br />
+
+              <h5 class="mb-3 text-center font-weight-bold">On Location?: </h5>
+              {% if item['is_user_on_loc'] is true %}
+              <p class="text-center" style="color: green;">Yes</p>
+              {% else %}
+              <p class="text-center" style="color: red;">No</p>
+              {% endif %}
+            </div>
+          </div>
         </div>
-        <br />
       </div>
     </div>
-    {% if item['is_user_on_loc'] is true %}
-    <h4 class="mb-3 text-center">You are on location of the ticket.</h4>
-    {% else %}
-    <h4 class="mb-3 text-center">You are not on location of the ticket. :(</h4>
-    {% endif %}
-    {% if item['ticket_status'] == 2 or item['ticket_status'] == 1 %}
-    <form method="POST" id="myForm">
-      <button type="submit" class="btn btn-lg btn-primary"
-        formaction="{{  url_for('/ticket.accept_ticket', ticket_id=item['ticket'].id)  }}"
-        id="accpet_ticket_btn_{{ item['ticket'].id }}">Accept ticket</input>
+    <div class="row justify-content-center">
+      <div class="col text-center">
+        {% if item['ticket_status'] == 2 or item['ticket_status'] == 1 %}
+        <form method="POST" id="myForm">
+          <button type="submit" class="btn btn-lg btn-primary btn-accept"
+            formaction="{{  url_for('/ticket.accept_ticket', ticket_id=item['ticket'].id)  }}"
+            id="accpet_ticket_btn_{{ item['ticket'].id }}">Accept ticket</input>
 
-        <button type="submit" class="btn btn-secondary btn-lg"
-          formaction="{{ url_for('/ticket.decline_ticket', ticket_id=item['ticket'].id)  }}"
-          id="decline_ticket_btn_{{ item['ticket'].id }}">Decline ticket</input>
-    </form>
-
-    {% elif item['ticket_status'] == 3 %}
-    <h4>Ticket accepted</h4>
-    <form method="POST" id="myForm">
-      <button type="submit" class="btn btn-secondary btn-lg"
-        formaction="{{  url_for('/ticket.suspend_ticket', ticket_id=item['ticket'].id)  }}"
-        id="suspend_ticket_btn_{{ item['ticket'].id }}">Suspend ticket</input> 
-        <button type="submit" class="btn btn-secondary btn-lg"
-          formaction="{{ url_for('/ticket.start_work',  ticket_id=item['ticket'].id)  }}"
-          id="start_work_btn_{{ item['ticket'].id }}">Start Work</input>
-          <button type="submit" class="btn btn-lg btn-primary"
-            formaction="{{ url_for('/ticket.mark_ticket_as_done', ticket_id=item['ticket'].id)  }}"
-            id="decline_ticket_btn_{{ item['ticket'].id }}">Done</input>
-    </form>
-    {% elif item['ticket_status'] == 5 %}
-    <h4>Ticket declined</h4>
-    {% elif item['ticket_status'] == 6 %}
-    <h4>Ticket done</h4>
-    {% endif %}
-
-
+            <button type="submit" class="btn btn-lg btn-danger ml-2 btn-decline"
+              formaction="{{ url_for('/ticket.decline_ticket', ticket_id=item['ticket'].id)  }}"
+              id="decline_ticket_btn_{{ item['ticket'].id }}">Decline ticket</input>
+        </form>
+        {% elif item['ticket_status'] == 3 %}
+        <h4>Ticket accepted</h4>
+        <form method="POST" id="myForm">
+          <button type="submit" class="btn btn-secondary btn-lg btn-danger"
+            formaction="{{  url_for('/ticket.suspend_ticket', ticket_id=item['ticket'].id)  }}"
+            id="suspend_ticket_btn_{{ item['ticket'].id }}">Suspend ticket</input>
+            {% if item['is_user_on_loc'] is true %}
+            <button type="submit" class="btn btn-secondary btn-lg ml-2"
+              formaction="{{ url_for('/ticket.start_work',  ticket_id=item['ticket'].id)  }}"
+              id="start_work_btn_{{ item['ticket'].id }}">Start Work</input>
+              {% endif %}
+              <button type="submit" class="btn btn-lg btn-primary ml-2"
+                formaction="{{ url_for('/ticket.mark_ticket_as_done', ticket_id=item['ticket'].id)  }}"
+                id="decline_ticket_btn_{{ item['ticket'].id }}">Done</input>
+        </form>
+        {% elif item['ticket_status'] == 5 %}
+        <h4>Ticket declined</h4>
+        {% elif item['ticket_status'] == 6 %}
+        <h4>Ticket done</h4>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
   </div>
-</div>
-
-{% endfor %}
-</div>
-{% endblock %}
+  {% endblock %}

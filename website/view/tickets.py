@@ -18,8 +18,10 @@ ticket_bp = Blueprint('/ticket', __name__)
 
 
 def is_user_on_loc(user_latitude, user_longitude, latitude, longitude):
+    user_latitude = 10.01
+    user_longitude = 10.01
     distance = (pow((user_longitude - longitude), 2) + pow((user_latitude - latitude), 2))
-    if distance < 0.001:
+    if distance < 0.1:
         return True
     else:
         return False
