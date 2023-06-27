@@ -20,6 +20,22 @@
         font-size: 16px;
         line-height: 1.5;
       }
+      .btn-suspend {
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .btn-start {
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .btn-done {
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
     </style>
 
     <div class="row border rounded overflow-hidden position-relative ">
@@ -119,15 +135,15 @@
         {% elif item['ticket_status'] == 3 %}
         <h4>Ticket accepted</h4>
         <form method="POST" id="myForm">
-          <button type="submit" class="btn btn-secondary btn-lg btn-danger"
+          <button type="submit" class="btn btn-secondary btn-lg btn-danger btn-suspend"
             formaction="{{  url_for('/ticket.suspend_ticket', ticket_id=item['ticket'].id)  }}"
             id="suspend_ticket_btn_{{ item['ticket'].id }}">Suspend ticket</input>
             {% if item['is_user_on_loc'] is true %}
-            <button type="submit" class="btn btn-secondary btn-lg ml-2"
+            <button type="submit" class="btn btn-secondary btn-lg ml-2 btn-start"
               formaction="{{ url_for('/ticket.start_work',  ticket_id=item['ticket'].id)  }}"
               id="start_work_btn_{{ item['ticket'].id }}">Start Work</input>
               {% endif %}
-              <button type="submit" class="btn btn-lg btn-primary ml-2"
+              <button type="submit" class="btn btn-lg btn-primary ml-2 btn-done"
                 formaction="{{ url_for('/ticket.mark_ticket_as_done', ticket_id=item['ticket'].id)  }}"
                 id="decline_ticket_btn_{{ item['ticket'].id }}">Done</input>
         </form>

@@ -1,5 +1,32 @@
 {% extends "base.html" %} {% block title %}HOME{% endblock %} {% block content %}
-<h1>siemanko witam w mojej kuchni</h1>
+
+<body>
+    <div class="page-container">
+        <header>
+            <h1 class="page-heading">CONNECTECH</h1>
+        </header>
+    </div>
+</body>
+
+<style>
+    .page-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .page-heading {
+        text-align: center;
+        font-size: 70px;
+        font-weight: 600;
+        background-color: linear-gradient(to left, #553c9a, #b392d3);
+        color: transparent;
+        background-clip: text;
+        -webkit-background-clip: text;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const closeButtons = document.querySelectorAll('.flash-message .close');

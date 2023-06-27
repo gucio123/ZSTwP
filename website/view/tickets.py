@@ -20,7 +20,8 @@ ticket_bp = Blueprint('/ticket', __name__)
 def is_user_on_loc(user_latitude, user_longitude, latitude, longitude):
     user_latitude = 10.01
     user_longitude = 10.01
-    distance = (pow((user_longitude - longitude), 2) + pow((user_latitude - latitude), 2))
+    distance = (pow((user_longitude - longitude), 2) +
+                pow((user_latitude - latitude), 2))
     if distance < 0.1:
         return True
     else:
@@ -32,9 +33,6 @@ def list_faults_per_maintainer(maintainer_id):
     if request.method == 'POST':
         pass
     elif request.method == 'GET':
-        # For purposes of checking location it is right now done here as maintainers' faults and tickets are listed
-        # already and only has to check if the location is correct for every fault.
-        # TODO: Think about where we want to put this check finally, probably there will be some authentication screen or something like it.
         if current_user.maintainer_id == None:
             abort(401)
         url = 'http://ipinfo.io/json'
@@ -49,7 +47,8 @@ def list_faults_per_maintainer(maintainer_id):
             return render_template("ticket_list.html")
         ticket_with_fault_list = []
         notifications = get_notifications_from_session()
-        tickets_with_notifications = find_tickets_with_notifications_and_mark_as_seen(tickets, notifications)
+        tickets_with_notifications = find_tickets_with_notifications_and_mark_as_seen(
+            tickets, notifications)
 
         for ticket in tickets:
             if tickets_with_notifications is not None and ticket in tickets_with_notifications:
@@ -58,7 +57,8 @@ def list_faults_per_maintainer(maintainer_id):
                 does_ticket_have_notification = False
             fault = Fault.query.filter_by(id=ticket.fault_id).first()
             reporter = User.query.filter_by(id=ticket.reporter_id).first()
-            is_user_on_location = is_user_on_loc(user_latitude, user_longitude, fault.latitude, fault.longitude)
+            is_user_on_location = is_user_on_loc(
+                user_latitude, user_longitude, fault.latitude, fault.longitude)
             ticket_status = ticket.status_id
             ticket_with_fault_list.append(
                 {"ticket": ticket,
@@ -97,6 +97,7 @@ def decline_ticket(ticket_id):
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=False)
     return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
 
+
 @ticket_bp.route('/start_work/<int:ticket_id>', methods=['GET', 'POST'])
 def start_work(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
@@ -104,8 +105,9 @@ def start_work(ticket_id):
     ticket.status_id = 3
     db.session.commit()
     flash('Work started successfully', 'success')
-    # return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
     return render_template('ticket_details.html', ticket=ticket, fault=fault)
+
+
 @ticket_bp.route('/suspend/<ticket_id>', methods=(['GET', 'POST']))
 def suspend_ticket(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
@@ -114,8 +116,6 @@ def suspend_ticket(ticket_id):
     return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
 
 
-# Not perfect function name. Ticket will be marked "WaitingForApproval" not "Done"
-# But from maintainer point of view the ticket will be done
 @ticket_bp.route('/mark_ticket_as_done/<ticket_id>', methods=(['GET', 'POST']))
 def mark_ticket_as_done(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
@@ -164,9 +164,9 @@ def get_all_undone_tickets(current_user_id):
 def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: List[Notification]):
     if notifications is not None:
         ticket_ids = [notification.ticket_id for notification in notifications]
-        tickets_with_notifications = [ticket for ticket in tickets if ticket.id in ticket_ids]
+        tickets_with_notifications = [
+            ticket for ticket in tickets if ticket.id in ticket_ids]
         for notification in notifications:
-            # notification.was_seen = 1
             db.session.delete(notification)
         for ticket in tickets:
             if ticket.status_id == 1:
@@ -179,7 +179,6 @@ def find_tickets_with_notifications_and_mark_as_seen(tickets, notifications: Lis
 def mark_notifications_as_seen(notifications: List[Notification]):
     if notifications is not None:
         for notification in notifications:
-            # notification.was_seen = 1
             db.session.delete(notification)
         db.session.commit()
         update_user_notifications()
@@ -197,10 +196,13 @@ def get_notifications_from_session():
 
 def notify_operator(ticket_id, maintainer_id, was_accepted):
     if was_accepted:
-        content = "The maintainer: {} has accepted the ticket: {} ".format(ticket_id, maintainer_id)
+        content = "The maintainer: {} has accepted the ticket: {} ".format(
+            ticket_id, maintainer_id)
     else:
-        content = "The maintainer: {} has declined the ticket: {} ".format(ticket_id, maintainer_id)
-    operator_notification = Notification(content=content, for_operator=True, ticket_id=ticket_id)
+        content = "The maintainer: {} has declined the ticket: {} ".format(
+            ticket_id, maintainer_id)
+    operator_notification = Notification(
+        content=content, for_operator=True, ticket_id=ticket_id)
     db.session.add(operator_notification)
     db.session.commit()
 
@@ -208,7 +210,8 @@ def notify_operator(ticket_id, maintainer_id, was_accepted):
 def notify_operator_ticket_done(ticket_id):
     content = "The maintainer: {} has done the ticket: {}. Ticket waits for approval. ".\
         format(ticket_id, current_user.maintainer_id)
-    operator_notification = Notification(content=content, for_operator=True, ticket_id=ticket_id)
+    operator_notification = Notification(
+        content=content, for_operator=True, ticket_id=ticket_id)
     db.session.add(operator_notification)
     db.session.commit()
 
@@ -259,10 +262,12 @@ def create_ticket():
 
 
 def get_faults_without_ticket():
-    subquery = (db.session.query(Ticket).filter(or_(Ticket.fault_id.isnot(None), Ticket.status_id == 5)).subquery())
+    subquery = (db.session.query(Ticket).filter(
+        or_(Ticket.fault_id.isnot(None), Ticket.status_id == 5)).subquery())
     faults = (
         db.session.query(Fault.id).outerjoin(subquery, Fault.id == subquery.c.fault_id).
-            filter(or_(subquery.c.fault_id.is_(None), subquery.c.status_id == 5)).all()
+        filter(or_(subquery.c.fault_id.is_(None),
+               subquery.c.status_id == 5)).all()
     )
     return [id_[0] for id_ in faults]
 
@@ -289,19 +294,23 @@ def choose_maintainer():
 
 def notify_maintainer(maintainer_id, fault_id, was_declined=False, was_accepted=False):
     try:
-        ticket = Ticket.query.filter_by(fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
-        # TODO: Na podstawie np. contentu oznaczyc we frontendzie tickety z powiadomieniami na zielono/czerwono?
+        ticket = Ticket.query.filter_by(
+            fault_id=fault_id, maintainer_id=maintainer_id).all()[0]
         if was_declined:
-            content = "Ticket was declined! Please finish the job".format(ticket.id)
+            content = "Ticket was declined! Please finish the job".format(
+                ticket.id)
         elif was_accepted:
-            content = "Ticket was accepted! Good job, ticket done.".format(ticket.id)
+            content = "Ticket was accepted! Good job, ticket done.".format(
+                ticket.id)
         else:
             content = "New ticket with id: {} was created!".format(ticket.id)
         new_notification = Notification(ticket_id=ticket.id, content=content)
         db.session.add(new_notification)
-        notification = Notification.query.filter_by(ticket_id=ticket.id).all()[0]
+        notification = Notification.query.filter_by(
+            ticket_id=ticket.id).all()[0]
         user = User.query.filter_by(maintainer_id=maintainer_id).first()
-        new_notification_user_relationship = NotificationUser(user_id=user.id, notification_id=notification.id)
+        new_notification_user_relationship = NotificationUser(
+            user_id=user.id, notification_id=notification.id)
         db.session.add(new_notification_user_relationship)
         db.session.commit()
     except:
