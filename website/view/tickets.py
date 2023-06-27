@@ -28,7 +28,7 @@ def is_user_on_loc(user_latitude, user_longitude, latitude, longitude):
 
 
 @ticket_bp.route('/list/<int:maintainer_id>', methods=(['GET', 'POST']))
-def list_faults_per_operator(maintainer_id):
+def list_faults_per_maintainer(maintainer_id):
     if request.method == 'POST':
         pass
     elif request.method == 'GET':
@@ -85,7 +85,7 @@ def accept_ticket(ticket_id):
     ticket.status_id = 3
     db.session.commit()
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=True)
-    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+    return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
 
 
 @ticket_bp.route('/decline/<ticket_id>', methods=(['GET', 'POST']))
@@ -95,7 +95,7 @@ def decline_ticket(ticket_id):
     ticket.maintainer_id = None
     db.session.commit()
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=False)
-    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+    return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
 
 @ticket_bp.route('/start_work/<int:ticket_id>', methods=['GET', 'POST'])
 def start_work(ticket_id):
@@ -104,14 +104,14 @@ def start_work(ticket_id):
     ticket.status_id = 3
     db.session.commit()
     flash('Work started successfully', 'success')
-    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
-
+    # return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
+    return render_template('ticket_details.html', ticket=ticket, fault=fault)
 @ticket_bp.route('/suspend/<ticket_id>', methods=(['GET', 'POST']))
 def suspend_ticket(ticket_id):
     ticket = Ticket.query.filter_by(id=ticket_id).first()
     ticket.status_id = 2
     db.session.commit()
-    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+    return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
 
 
 # Not perfect function name. Ticket will be marked "WaitingForApproval" not "Done"
@@ -122,7 +122,7 @@ def mark_ticket_as_done(ticket_id):
     ticket.status_id = 6
     db.session.commit()
     notify_operator_ticket_done(ticket_id)
-    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
+    return redirect(url_for("/ticket.list_faults_per_maintainer", maintainer_id=current_user.maintainer_id))
 
 
 @ticket_bp.route('/approve_ticket/<ticket_id>', methods=(['GET', 'POST']))
