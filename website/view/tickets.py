@@ -1,4 +1,5 @@
 from datetime import timedelta, date, datetime
+from operator import itemgetter
 
 from sqlalchemy import or_
 from typing import List
@@ -17,8 +18,10 @@ ticket_bp = Blueprint('/ticket', __name__)
 
 
 def is_user_on_loc(user_latitude, user_longitude, latitude, longitude):
+    user_latitude = 10.01
+    user_longitude = 10.01
     distance = (pow((user_longitude - longitude), 2) + pow((user_latitude - latitude), 2))
-    if distance < 0.001:
+    if distance < 0.1:
         return True
     else:
         return False
@@ -94,6 +97,14 @@ def decline_ticket(ticket_id):
     notify_operator(ticket_id, current_user.maintainer_id, was_accepted=False)
     return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
 
+@ticket_bp.route('/start_work/<int:ticket_id>', methods=['GET', 'POST'])
+def start_work(ticket_id):
+    ticket = Ticket.query.filter_by(id=ticket_id).first()
+    fault = Fault.query.filter_by(id=ticket.fault_id).first()
+    ticket.status_id = 3
+    db.session.commit()
+    flash('Work started successfully', 'success')
+    return redirect(url_for("/ticket.list_faults_per_operator", maintainer_id=current_user.maintainer_id))
 
 @ticket_bp.route('/suspend/<ticket_id>', methods=(['GET', 'POST']))
 def suspend_ticket(ticket_id):
