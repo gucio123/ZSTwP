@@ -21,14 +21,18 @@
         <td>{{ "Yes" if user.isOperator else "No" }}</td>
         <td>
           {% if current_user.isAdmin %}
+          {% if not user.isAdmin %}
             <form action="{{ url_for('permissions.admin_panel') }}" method="POST" class="d-inline">
               <input type="hidden" name="user_id" value="{{ user.id }}">
               <button type="submit" class="btn btn-primary">Assign Admin</button>
             </form>
+          {% endif %}
+          {% if not user.isOperator %}
             <form action="{{ url_for('permissions.operator_panel') }}" method="POST" class="d-inline">
               <input type="hidden" name="user_id" value="{{ user.id }}">
               <button type="submit" class="btn btn-primary">Assign Operator</button>
             </form>
+          {% endif %}
           {% endif %}
           {% if user.isAdmin %}
           <form action="{{ url_for('permissions.remove_admin') }}" method="POST" class="d-inline">

@@ -108,12 +108,15 @@
         <a class="nav-item nav-link" id="logout" href="/auth/logout">Logout</a>
 
 
-        {% if current_user.isAdmin or current_user.isOperator %}
+        {% if current_user.isAdmin %}
         <a class="nav-item nav-link" id="admin" href="/permissions/admin">Admin</a>
-        <a class="nav-item nav-link" id="Report fault" href="/faults/report">Report fault</a>
-        <a class="nav-item nav-link" id="List fault" href="/faults/list">List faults</a>
         <a class="nav-item nav-link" id="assign_maintainer_to_contractor" href="/maintainers/add_maintainer">Add
           maintainer</a>
+        {% endif %}
+        {% if current_user.isOperator %}
+        <a class="nav-item nav-link" id="Report fault" href="/faults/report">Report fault</a>
+        <a class="nav-item nav-link" id="List fault" href="/faults/list">List faults</a>
+
         {% elif current_user.maintainer_id != None %}
 
 
